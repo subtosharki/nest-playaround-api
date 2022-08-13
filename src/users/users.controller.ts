@@ -1,12 +1,19 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { User, UsersService } from './users.service';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ErrorJSON, type User, UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Get('/')
-  getUsers(@Query('token') token: string): User[] | string {
-    return this.userService.getUsers(token);
+  getAllUsers(@Query('token') token: string): User[] | ErrorJSON {
+    return this.userService.getAllUsers(token);
+  }
+  @Get('/:id')
+  getUser(
+    @Query('token') token: string,
+    @Param('id') id: string,
+  ): User | ErrorJSON {
+    return this.userService.getUser(token, parseInt(id));
   }
 }
