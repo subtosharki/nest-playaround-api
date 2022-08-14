@@ -12,15 +12,12 @@ export interface ErrorJSON {
   code: number;
 }
 
-const UnauthorizedError: ErrorJSON = { message: 'Unauthorized', code: 401 };
 const UserNotFoundError: ErrorJSON = { message: 'User not found', code: 404 };
 
 @Injectable()
 export class UsersService {
-  authCode: string;
   users: User[];
   constructor() {
-    this.authCode = 'testcode';
     this.users = [
       {
         id: 1,
@@ -42,15 +39,10 @@ export class UsersService {
       },
     ];
   }
-  private checkAuth(userToken: string): boolean {
-    return userToken === this.authCode;
-  }
-  public getAllUsers(userToken: string): User[] | ErrorJSON {
-    if (!this.checkAuth(userToken)) return UnauthorizedError;
+  public getAllUsers(): User[] {
     return this.users;
   }
-  public getUser(userToken: string, id: number): User | ErrorJSON {
-    if (!this.checkAuth(userToken)) return UnauthorizedError;
+  public getUser(id: number): User | ErrorJSON {
     if (!this.users.find((user) => user.id === id)) return UserNotFoundError;
     return this.users.find((user) => user.id === id);
   }
