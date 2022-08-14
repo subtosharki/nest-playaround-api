@@ -1,7 +1,11 @@
-import { Injectable, NestMiddleware, UnauthorizedException } from "@nestjs/common";
-import type { NextFunction, Request, Response } from "express";
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
+import type { NextFunction, Request, Response } from 'express';
 
-const AUTH_CODE = "testcode";
+const AUTH_CODE = 'testcode';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
