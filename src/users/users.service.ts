@@ -1,49 +1,29 @@
-import { Injectable } from '@nestjs/common';
-
-export interface User {
-  id: number;
-  name: string;
-  password: string;
-  admin: boolean;
-}
-
-export interface ErrorJSON {
-  message: string;
-  code: number;
-}
-
-const UserNotFoundError: ErrorJSON = { message: 'User not found', code: 404 };
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './schemas/user.schema';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class UsersService {
-  users: User[];
-  constructor() {
-    this.users = [
-      {
-        id: 1,
-        name: 'user1',
-        password: 'pass123',
-        admin: true,
-      },
-      {
-        id: 2,
-        name: 'user2',
-        password: 'pass123',
-        admin: false,
-      },
-      {
-        id: 3,
-        name: 'user3',
-        password: 'pass123',
-        admin: false,
-      },
-    ];
+  private users: User[];
+  constructor(
+    @InjectModel('User')
+    private readonly usersModel: Model<User>,
+  ) {
+    this.loadUsers();
   }
-  public getAllUsers(): User[] {
+  private async loadUsers() {
+    this.users = await this.usersModel.find();
+  }
+
+  public getAllUsers() {
     return this.users;
   }
-  public getUser(id: number): User | ErrorJSON {
-    if (!this.users.find((user) => user.id === id)) return UserNotFoundError;
+  public getUser(id: number) {
+    if (!this.users.find((user) => user.id === id))
+      throw new NotFoundException();
     return this.users.find((user) => user.id === id);
   }
 }

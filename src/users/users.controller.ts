@@ -1,16 +1,16 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
-import { ErrorJSON, type User, UsersService } from './users.service';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Get('/')
-  getAllUsers(): User[] | ErrorJSON {
+  getAllUsers() {
     return this.userService.getAllUsers();
   }
   @Get('/:id')
-  getUser(@Param('id', new ParseIntPipe()) id: number): User | ErrorJSON {
+  getUser(@Param('id', new ParseIntPipe()) id: number) {
     return this.userService.getUser(id);
   }
 }
