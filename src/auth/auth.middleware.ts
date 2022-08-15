@@ -4,13 +4,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import type { NextFunction, Request, Response } from 'express';
-
-const AUTH_CODE = 'testcode';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-  use(req: Request, res: Response, next: NextFunction) {
-    if (req.header('api-auth') !== AUTH_CODE) throw new UnauthorizedException();
+  constructor(private readonly authService: AuthService) {}
+
+  async use(req: Request, res: Response, next: NextFunction) {
+    if (! await this.authService.checkAuth(req.header('api-auth'))) throw new UnauthorizedException();
     next();
   }
 }
