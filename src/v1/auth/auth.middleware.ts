@@ -11,7 +11,8 @@ export class AuthMiddleware implements NestMiddleware {
   constructor(private readonly authService: AuthService) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    if (! await this.authService.checkAuth(req.header('api-auth'))) throw new UnauthorizedException();
+    if (!(await this.authService.checkAuth(req.header('api-auth'))))
+      throw new UnauthorizedException();
     next();
   }
 }

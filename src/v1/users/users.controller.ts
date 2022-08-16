@@ -6,15 +6,11 @@ import {
   Param,
   Patch,
   Post,
-  Put,
 } from '@nestjs/common';
-import {
-  CreateUserDto,
-  UpdateUserDto,
-} from './users.dto';
+import { CreateUserDto } from './users.dto';
 import { UsersService } from './users.service';
 
-@Controller('users')
+@Controller({path: "users", version: '1'})
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
   @Get('/')
@@ -50,10 +46,6 @@ export class UsersController {
   @Patch('/:id/password')
   updatePassword(@Param('id') id: string, @Body('password') password: string) {
     return this.userService.updatePassword(id, password);
-  }
-  @Put('/:id')
-  updateUser(@Param('id') id: string, @Body() user: UpdateUserDto) {
-    return this.userService.updateUser(id, user);
   }
 
   @Get('/:id/apikey')
