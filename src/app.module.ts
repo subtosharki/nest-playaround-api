@@ -7,11 +7,7 @@ import { AuthModule } from './v1/auth/auth.module';
 import compression from 'compression';
 
 @Module({
-  imports: [
-    UsersModule,
-    MongooseModule.forRoot('mongodb://localhost/nest'),
-    AuthModule,
-  ],
+  imports: [UsersModule, MongooseModule.forRoot(process.env.DB), AuthModule],
 })
 export class AppModule implements NestModule {
   async configure(consumer: MiddlewareConsumer) {
