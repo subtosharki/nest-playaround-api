@@ -1,69 +1,52 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { v4 as uuid } from 'uuid';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
-  CreateUserDto,
   DeleteUserDto,
   GetPasswordDto,
   GetUserDto,
   GetUsernameDto,
   UpdatePasswordDto,
   UpdateUsernameDto,
+  UserIdDto,
 } from './users.dto';
+import { ApikeyService } from '../apikey/apikey.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
-  private async generateApiKey() {
-    return uuid();
-  }
+  constructor(
+    private prisma: PrismaService,
+    private readonly APIkeyService: ApikeyService,
+  ) {}
   public async getAllUsers() {
     return await this.prisma.user.findMany();
   }
-  public async getUser(body: GetUserDto) {
+  public async getUser({ id }: GetUserDto) {
     try {
       return await this.prisma.user.findFirst({
         where: {
-          id: body.id,
+          id,
         },
       });
     } catch (e) {
       throw new NotFoundException();
     }
   }
-  public async createUser(body: CreateUserDto) {
-    const { username, password } = body;
-    try {
-      return await this.prisma.user.create({
-        data: {
-          username,
-          password,
-        },
-      });
-    } catch (e) {
-      throw new InternalServerErrorException(e);
-    }
-  }
-  public async deleteUser(body: DeleteUserDto) {
+  public async deleteUser({ id }: DeleteUserDto) {
     try {
       return await this.prisma.user.delete({
         where: {
-          id: body.id,
+          id,
         },
       });
     } catch (e) {
       throw new NotFoundException();
     }
   }
-  public async getUsername(body: GetUsernameDto) {
+  public async getUsername({ id }: GetUsernameDto) {
     try {
       return await this.prisma.user.findFirst({
         where: {
-          id: body.id,
+          id,
         },
         select: {
           username: true,
@@ -74,11 +57,11 @@ export class UsersService {
     }
   }
 
-  public async getPassword(body: GetPasswordDto) {
+  public async getPassword({ id }: GetPasswordDto) {
     try {
       return await this.prisma.user.findFirst({
         where: {
-          id: body.id,
+          id,
         },
         select: {
           password: true,
@@ -88,14 +71,17 @@ export class UsersService {
       throw new NotFoundException();
     }
   }
-  public async updateUsername(id: number, body: UpdateUsernameDto) {
+  public async updateUsername(
+    { id }: UserIdDto,
+    { username }: UpdateUsernameDto,
+  ) {
     try {
       return await this.prisma.user.update({
         where: {
           id,
         },
         data: {
-          username: body.username,
+          username,
         },
       });
     } catch (e) {
@@ -103,21 +89,24 @@ export class UsersService {
     }
   }
 
-  public async updatePassword(id: number, body: UpdatePasswordDto) {
+  public async updatePassword(
+    { id }: UserIdDto,
+    { password }: UpdatePasswordDto,
+  ) {
     try {
       return await this.prisma.user.update({
         where: {
           id,
         },
         data: {
-          password: body.password,
+          password,
         },
       });
     } catch (e) {
       throw new NotFoundException();
     }
   }
-  public async getAPIKey(id: number) {
+  public async getAPIKey({ id }: UserIdDto) {
     try {
       return await this.prisma.user.findFirst({
         where: {
@@ -131,14 +120,14 @@ export class UsersService {
       throw new NotFoundException();
     }
   }
-  public async createNewAPIKey(id: number) {
+  public async createNewAPIKey({ id }: UserIdDto) {
     try {
       return await this.prisma.user.update({
         where: {
           id,
         },
         data: {
-          apikey: await this.generateApiKey(),
+          apikey: await this.APIkeyService.generateAPIKey(),
         },
       });
     } catch (e) {
