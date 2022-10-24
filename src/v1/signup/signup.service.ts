@@ -10,15 +10,13 @@ export class SignupService {
     private readonly APIkeyService: ApikeyService,
   ) {}
 
-  public async signup({ username, password, generate_apikey }: SignupDto) {
+  public async signup({ username, password }: SignupDto) {
     try {
       return await this.prisma.user.create({
         data: {
           username,
           password,
-          apikey: generate_apikey
-            ? await this.APIkeyService.generateAPIKey()
-            : null,
+          apikey: await this.APIkeyService.generateAPIKey(),
         },
       });
     } catch (e) {

@@ -60,14 +60,4 @@ export class UsersController {
   ) {
     return this.userService.updatePassword(id, password);
   }
-
-  // need to make own path for apikey stuff
-  @Get('/:id/apikey')
-  public getApiKey(@Param('id') id: UserIdDto) {
-    return this.userService.getAPIKey(id);
-  }
-  @Post('/:id/apikey')
-  public createApiKey(@Param('id') id: UserIdDto) {
-    return this.userService.createNewAPIKey(id);
-  }
 }

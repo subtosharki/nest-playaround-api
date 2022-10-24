@@ -8,10 +8,18 @@ import { LoginModule } from './v1/login/login.module';
 import { SignupModule } from './v1/signup/signup.module';
 import { ApikeyModule } from './v1/apikey/apikey.module';
 import { SignupController } from './v1/signup/signup.controller';
+import { AdminModule } from './v1/admin/admin.module';
 import helmet from 'helmet';
 
 @Module({
-  imports: [UsersModule, PrismaModule, LoginModule, SignupModule, ApikeyModule],
+  imports: [
+    UsersModule,
+    PrismaModule,
+    LoginModule,
+    SignupModule,
+    ApikeyModule,
+    AdminModule,
+  ],
   providers: [PrismaService],
 })
 export class AppModule implements NestModule {

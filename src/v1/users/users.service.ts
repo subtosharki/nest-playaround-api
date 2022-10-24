@@ -106,32 +106,4 @@ export class UsersService {
       throw new NotFoundException();
     }
   }
-  public async getAPIKey({ id }: UserIdDto) {
-    try {
-      return await this.prisma.user.findFirst({
-        where: {
-          id,
-        },
-        select: {
-          apikey: true,
-        },
-      });
-    } catch (e) {
-      throw new NotFoundException();
-    }
-  }
-  public async createNewAPIKey({ id }: UserIdDto) {
-    try {
-      return await this.prisma.user.update({
-        where: {
-          id,
-        },
-        data: {
-          apikey: await this.APIkeyService.generateAPIKey(),
-        },
-      });
-    } catch (e) {
-      throw new NotFoundException();
-    }
-  }
 }
