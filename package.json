@@ -5,13 +5,16 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "prisma": {
+    "schema": "./src/v1/prisma/schema.prisma"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "prisma": "prisma migrate dev --schema ./src/v1/prisma/schema.prisma && prisma generate --schema ./src/v1/prisma/schema.prisma",
+    "prisma": "prisma migrate dev && prisma generate",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "test": "jest",
