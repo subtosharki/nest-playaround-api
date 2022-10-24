@@ -6,11 +6,22 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
-import { CreateUserDto } from './users.dto';
+import {
+  DeleteUserDto,
+  GetPasswordDto,
+  GetUserDto,
+  GetUsernameDto,
+  UpdatePasswordDto,
+  UpdateUsernameDto,
+  UserIdDto,
+} from './users.dto';
 import { UsersService } from './users.service';
+import { AuthGuard } from '../auth/auth.gaurd';
 
-@Controller({path: "users", version: '1'})
+@Controller({ path: 'users', version: '1' })
+@UseGuards(AuthGuard)
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
   @Get('/')
@@ -18,42 +29,45 @@ export class UsersController {
     return this.userService.getAllUsers();
   }
   @Get('/:id')
-  getUser(@Param('id') id: string) {
+  public getUser(@Param('id') id: GetUserDto) {
     return this.userService.getUser(id);
   }
-  @Post('/')
-  createUser(@Body() user: CreateUserDto) {
-    return this.userService.createUser(user.username, user.password);
-  }
   @Delete('/:id')
-  deleteUser(@Param('id') id: string) {
+  public deleteUser(@Param('id') id: DeleteUserDto) {
     return this.userService.deleteUser(id);
   }
 
   @Get('/:id/username')
-  getUsername(@Param('id') id: string) {
+  public getUsername(@Param('id') id: GetUsernameDto) {
     return this.userService.getUsername(id);
   }
   @Get('/:id/password')
-  getPassword(@Param('id') id: string) {
+  public getPassword(@Param('id') id: GetPasswordDto) {
     return this.userService.getPassword(id);
   }
 
   @Patch('/:id/username')
-  updateUsername(@Param('id') id: string, @Body('username') username: string) {
+  public updateUsername(
+    @Param('id') id: UserIdDto,
+    @Body('username') username: UpdateUsernameDto,
+  ) {
     return this.userService.updateUsername(id, username);
   }
   @Patch('/:id/password')
-  updatePassword(@Param('id') id: string, @Body('password') password: string) {
+  public updatePassword(
+    @Param('id') id: UserIdDto,
+    @Body('password') password: UpdatePasswordDto,
+  ) {
     return this.userService.updatePassword(id, password);
   }
 
+  // need to make own path for apikey stuff
   @Get('/:id/apikey')
-  getApiKey(@Param('id') id: string) {
+  public getApiKey(@Param('id') id: UserIdDto) {
     return this.userService.getAPIKey(id);
   }
   @Post('/:id/apikey')
-  createApiKey(@Param('id') id: string) {
+  public createApiKey(@Param('id') id: UserIdDto) {
     return this.userService.createNewAPIKey(id);
   }
 }

@@ -1,11 +1,51 @@
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateUserDto {
+export class UserIdDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  public id: number;
+}
+
+export class GetUserDto {
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  id: number;
+}
+
+export class GetUsernameDto {
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  id: number;
+}
+
+export class GetPasswordDto {
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  id: number;
+}
+
+export class DeleteUserDto {
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  id: number;
+}
+
+export class UpdateUsernameDto {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  public username: string;
+  username: string;
+}
 
+export class UpdatePasswordDto {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  public password: string;
+  password: string;
 }

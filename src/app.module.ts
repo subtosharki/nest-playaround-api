@@ -1,20 +1,23 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { UsersModule } from './v1/users/users.module';
-import { AuthMiddleware } from './v1/auth/auth.middleware';
-import { MongooseModule } from '@nestjs/mongoose';
 import { UsersController } from './v1/users/users.controller';
-import { AuthModule } from './v1/auth/auth.module';
 import compression from 'compression';
+import { PrismaService } from './v1/prisma/prisma.service';
+import { PrismaModule } from './v1/prisma/prisma.module';
+import { LoginModule } from './v1/login/login.module';
+import { SignupModule } from './v1/signup/signup.module';
+import { ApikeyModule } from './v1/apikey/apikey.module';
+import { SignupController } from './v1/signup/signup.controller';
+import helmet from 'helmet';
 
 @Module({
-  imports: [
-    UsersModule,
-    MongooseModule.forRoot('mongodb://localhost/nest'),
-    AuthModule,
-  ],
+  imports: [UsersModule, PrismaModule, LoginModule, SignupModule, ApikeyModule],
+  providers: [PrismaService],
 })
 export class AppModule implements NestModule {
   async configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware, compression).forRoutes(UsersController);
+    consumer
+      .apply(compression, helmet())
+      .forRoutes(UsersController, SignupController);
   }
 }
