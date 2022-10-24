@@ -9,6 +9,7 @@ import { SignupModule } from './v1/signup/signup.module';
 import { ApikeyModule } from './v1/apikey/apikey.module';
 import { SignupController } from './v1/signup/signup.controller';
 import { AdminModule } from './v1/admin/admin.module';
+import { HashModule } from './v1/hash/hash.module';
 import helmet from 'helmet';
 
 @Module({
@@ -19,6 +20,7 @@ import helmet from 'helmet';
     SignupModule,
     ApikeyModule,
     AdminModule,
+    HashModule,
   ],
   providers: [PrismaService],
 })

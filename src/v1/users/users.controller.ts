@@ -5,18 +5,9 @@ import {
   Get,
   Param,
   Patch,
-  Post,
   UseGuards,
 } from '@nestjs/common';
-import {
-  DeleteUserDto,
-  GetPasswordDto,
-  GetUserDto,
-  GetUsernameDto,
-  UpdatePasswordDto,
-  UpdateUsernameDto,
-  UserIdDto,
-} from './users.dto';
+import { UpdatePasswordDto, UpdateUsernameDto, UserIdDto } from './users.dto';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/auth.gaurd';
 
@@ -29,23 +20,18 @@ export class UsersController {
     return this.userService.getAllUsers();
   }
   @Get('/:id')
-  public getUser(@Param('id') id: GetUserDto) {
+  public getUser(@Param('id') id: UserIdDto) {
     return this.userService.getUser(id);
   }
   @Delete('/:id')
-  public deleteUser(@Param('id') id: DeleteUserDto) {
+  public deleteUser(@Param('id') id: UserIdDto) {
     return this.userService.deleteUser(id);
   }
 
   @Get('/:id/username')
-  public getUsername(@Param('id') id: GetUsernameDto) {
+  public getUsername(@Param('id') id: UserIdDto) {
     return this.userService.getUsername(id);
   }
-  @Get('/:id/password')
-  public getPassword(@Param('id') id: GetPasswordDto) {
-    return this.userService.getPassword(id);
-  }
-
   @Patch('/:id/username')
   public updateUsername(
     @Param('id') id: UserIdDto,

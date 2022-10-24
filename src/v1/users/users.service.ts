@@ -1,26 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import {
-  DeleteUserDto,
-  GetPasswordDto,
-  GetUserDto,
-  GetUsernameDto,
-  UpdatePasswordDto,
-  UpdateUsernameDto,
-  UserIdDto,
-} from './users.dto';
+import { UpdatePasswordDto, UpdateUsernameDto, UserIdDto } from './users.dto';
 import { ApikeyService } from '../apikey/apikey.service';
+import { HashService } from '../hash/hash.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private prisma: PrismaService,
     private readonly APIkeyService: ApikeyService,
+    private readonly hashService: HashService,
   ) {}
   public async getAllUsers() {
     return await this.prisma.user.findMany();
   }
-  public async getUser({ id }: GetUserDto) {
+  public async getUser({ id }: UserIdDto) {
     try {
       return await this.prisma.user.findFirst({
         where: {
@@ -31,7 +25,7 @@ export class UsersService {
       throw new NotFoundException();
     }
   }
-  public async deleteUser({ id }: DeleteUserDto) {
+  public async deleteUser({ id }: UserIdDto) {
     try {
       return await this.prisma.user.delete({
         where: {
@@ -42,7 +36,7 @@ export class UsersService {
       throw new NotFoundException();
     }
   }
-  public async getUsername({ id }: GetUsernameDto) {
+  public async getUsername({ id }: UserIdDto) {
     try {
       return await this.prisma.user.findFirst({
         where: {
@@ -50,21 +44,6 @@ export class UsersService {
         },
         select: {
           username: true,
-        },
-      });
-    } catch (e) {
-      throw new NotFoundException();
-    }
-  }
-
-  public async getPassword({ id }: GetPasswordDto) {
-    try {
-      return await this.prisma.user.findFirst({
-        where: {
-          id,
-        },
-        select: {
-          password: true,
         },
       });
     } catch (e) {
@@ -99,7 +78,7 @@ export class UsersService {
           id,
         },
         data: {
-          password,
+          password: await this.hashService.hashPassword(password),
         },
       });
     } catch (e) {

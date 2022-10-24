@@ -8,34 +8,6 @@ export class UserIdDto {
   public id: number;
 }
 
-export class GetUserDto {
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  id: number;
-}
-
-export class GetUsernameDto {
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  id: number;
-}
-
-export class GetPasswordDto {
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  id: number;
-}
-
-export class DeleteUserDto {
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  id: number;
-}
-
 export class UpdateUsernameDto {
   @ApiProperty()
   @IsString()
