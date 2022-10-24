@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ApikeyService } from '../apikey/apikey.service';
 import { HashService } from '../hash/hash.service';
 import { AuthService } from '../auth/auth.service';
+import { AdminService } from '../admin/admin.service';
 
 @Module({
   controllers: [UsersController],
@@ -14,6 +15,7 @@ import { AuthService } from '../auth/auth.service';
     ApikeyService,
     HashService,
     AuthService,
+    AdminService,
   ],
 })
 export class UsersModule {

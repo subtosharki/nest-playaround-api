@@ -6,7 +6,7 @@ import { SignupDto } from './signup.dto';
 export class SignupController {
   constructor(private readonly signupService: SignupService) {}
   @Post()
-  public async signup(@Body() body: SignupDto) {
+  async signup(@Body() body: SignupDto) {
     return await this.signupService.signup(body);
   }
 }

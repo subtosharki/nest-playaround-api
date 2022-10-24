@@ -5,7 +5,7 @@ export class UserIdDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  public id: number;
+  id: number;
 }
 
 export class UpdateUsernameDto {
