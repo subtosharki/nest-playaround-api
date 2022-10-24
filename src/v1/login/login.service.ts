@@ -15,10 +15,7 @@ export class LoginService {
         username,
       },
     });
-    if (
-      user &&
-      (await this.hashService.comparePassword(password, user.password))
-    )
+    if (user && (await this.hashService.compare(password, user.password)))
       return user;
     throw new UnauthorizedException();
   }

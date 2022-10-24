@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch } from '@nestjs/common';
+import { Controller, Param, Patch } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserIdDto } from '../users/users.dto';
 import { ApikeyService } from './apikey.service';
@@ -9,11 +9,6 @@ export class ApikeyController {
     private prisma: PrismaService,
     private readonly APIkeyService: ApikeyService,
   ) {}
-
-  @Get('/:id')
-  public getApiKey(@Param('id') id: UserIdDto) {
-    return this.APIkeyService.getAPIKey(id);
-  }
   @Patch('/:id')
   public createApiKey(@Param('id') id: UserIdDto) {
     return this.APIkeyService.getNewAPIKey(id);

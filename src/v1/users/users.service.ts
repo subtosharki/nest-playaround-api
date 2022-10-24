@@ -67,7 +67,6 @@ export class UsersService {
       throw new NotFoundException();
     }
   }
-
   public async updatePassword(
     { id }: UserIdDto,
     { password }: UpdatePasswordDto,
@@ -78,7 +77,7 @@ export class UsersService {
           id,
         },
         data: {
-          password: await this.hashService.hashPassword(password),
+          password: await this.hashService.hash(password),
         },
       });
     } catch (e) {

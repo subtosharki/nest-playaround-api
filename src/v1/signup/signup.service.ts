@@ -31,7 +31,7 @@ export class SignupService {
       return await this.prisma.user.create({
         data: {
           username,
-          password: await this.hashService.hashPassword(password),
+          password: await this.hashService.hash(password),
           apikey: await this.APIkeyService.generateAPIKey(),
         },
       });

@@ -10,6 +10,8 @@ import { ApikeyModule } from './v1/apikey/apikey.module';
 import { SignupController } from './v1/signup/signup.controller';
 import { AdminModule } from './v1/admin/admin.module';
 import { HashModule } from './v1/hash/hash.module';
+import { AuthService } from './v1/auth/auth.service';
+import { AuthModule } from './v1/auth/auth.module';
 import helmet from 'helmet';
 
 @Module({
@@ -21,8 +23,9 @@ import helmet from 'helmet';
     ApikeyModule,
     AdminModule,
     HashModule,
+    AuthModule,
   ],
-  providers: [PrismaService],
+  providers: [PrismaService, AuthService],
 })
 export class AppModule implements NestModule {
   async configure(consumer: MiddlewareConsumer) {
