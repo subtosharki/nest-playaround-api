@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SignupDto } from './signup.dto';
 import { ApikeyService } from '../apikey/apikey.service';
@@ -13,6 +17,16 @@ export class SignupService {
   ) {}
 
   public async signup({ username, password }: SignupDto) {
+    const usernames = await this.prisma.user.findMany({
+      select: {
+        username: true,
+      },
+    });
+    usernames.forEach((user) => {
+      if (user.username === username) {
+        throw new BadRequestException('Username already exists');
+      }
+    });
     try {
       return await this.prisma.user.create({
         data: {
