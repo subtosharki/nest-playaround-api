@@ -1,14 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
-import { ApikeyService } from '../apikey/apikey.service';
 import { HashService } from '../hash/hash.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private prisma: PrismaService,
-    private readonly APIkeyService: ApikeyService,
     private readonly hashService: HashService,
   ) {}
   public async getAllUsers() {
