@@ -5,7 +5,7 @@ import { ApikeyService } from './apikey.service';
 export class ApikeyController {
   constructor(private readonly APIkeyService: ApikeyService) {}
   @Patch('/:id')
-  async createApiKey(@Param('id', ParseIntPipe) id: number) {
+  async getNewApiKey(@Param('id', ParseIntPipe) id: number) {
     return await this.APIkeyService.getNewAPIKey(id);
   }
 }
