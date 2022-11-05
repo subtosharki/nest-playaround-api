@@ -9,6 +9,8 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
 import { UsersService } from './users.service';
@@ -43,6 +45,7 @@ export class UsersController {
   }
   @Patch('/:id/username')
   @HttpCode(HttpStatus.OK)
+  @UsePipes(ValidationPipe)
   async updateUsername(
     @Param('id', ParseIntPipe) id: number,
     @Body('username') username: UpdateUsernameDto,
@@ -51,6 +54,7 @@ export class UsersController {
   }
   @Patch('/:id/password')
   @HttpCode(HttpStatus.OK)
+  @UsePipes(ValidationPipe)
   async updatePassword(
     @Param('id', ParseIntPipe) id: number,
     @Body('password') password: UpdatePasswordDto,

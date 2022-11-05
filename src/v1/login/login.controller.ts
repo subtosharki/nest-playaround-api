@@ -1,4 +1,12 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { LoginService } from './login.service';
 import { LoginDto } from './login.dto';
 
@@ -7,6 +15,7 @@ export class LoginController {
   constructor(private readonly loginService: LoginService) {}
   @Post('/')
   @HttpCode(HttpStatus.OK)
+  @UsePipes(ValidationPipe)
   public async login(@Body() body: LoginDto) {
     return await this.loginService.login(body);
   }
