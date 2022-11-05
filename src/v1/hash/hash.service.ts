@@ -3,10 +3,10 @@ import { hash as genHash, genSalt, compare } from 'bcrypt';
 
 @Injectable()
 export class HashService {
-  public async hash(password: string) {
-    return await genHash(password, await genSalt());
+  public async hash(val: string) {
+    return await genHash(val, await genSalt());
   }
-  public async compare(password: string, hash: string) {
-    return await compare(password, hash);
+  public async compare(val: string, hash: string) {
+    return await compare(val, hash);
   }
 }

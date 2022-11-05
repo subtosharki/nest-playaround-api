@@ -16,7 +16,7 @@ export class SignupService {
     private readonly hashService: HashService,
   ) {}
 
-  public async signup({ username, password }: SignupDto) {
+  public async signup({ username, password, password2 }: SignupDto) {
     const usernames = await this.prisma.user.findMany({
       select: {
         username: true,
@@ -27,12 +27,14 @@ export class SignupService {
         throw new BadRequestException('Username already exists');
       }
     });
+    if (password !== password2) {
+      throw new BadRequestException('Passwords do not match');
+    }
     try {
       return await this.prisma.user.create({
         data: {
           username,
           password: await this.hashService.hash(password),
-          apikey: await this.APIkeyService.generateAPIKey(),
         },
       });
     } catch (e) {

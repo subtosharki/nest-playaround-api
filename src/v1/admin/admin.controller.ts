@@ -1,16 +1,15 @@
 import {
   Controller,
-  Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { UserIdDto } from '../users/users.dto';
-import { AdminGaurd } from './admin.gaurd';
+import { AdminGuard } from './admin.guard';
 
-@UseGuards(AdminGaurd)
+@UseGuards(AdminGuard)
 @Controller({ path: 'admin', version: '1' })
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
@@ -18,12 +17,8 @@ export class AdminController {
   async getAllAdmins() {
     return await this.adminService.getAllAdmins();
   }
-  @Post('/set')
-  async setAdmin(@Param() id: UserIdDto) {
+  @Post('/add/:id')
+  async setAdmin(@Param('id', ParseIntPipe) id: number) {
     return await this.adminService.setAdmin(id);
-  }
-  @Delete('/remove')
-  async removeAdmin(@Param() id: UserIdDto) {
-    return await this.adminService.removeAdmin(id);
   }
 }

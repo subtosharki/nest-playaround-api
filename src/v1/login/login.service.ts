@@ -10,7 +10,7 @@ export class LoginService {
     private hashService: HashService,
   ) {}
   public async login({ username, password }: LoginDto) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findFirst({
       where: {
         username,
       },

@@ -1,6 +1,6 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserIdDto } from '../users/users.dto';
+import { Request } from 'express';
 
 @Injectable()
 export class AdminService {
@@ -12,30 +12,38 @@ export class AdminService {
       },
     });
   }
-  public async setAdmin({ id }: UserIdDto) {
-    return await this.prisma.user.update({
+  public async setAdmin(id: number) {
+    const { admin } = await this.prisma.user.findFirst({
       where: {
         id,
       },
-      data: {
+      select: {
         admin: true,
       },
     });
+    if (admin) {
+      return await this.prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          admin: false,
+        },
+      });
+    } else {
+      return await this.prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          admin: true,
+        },
+      });
+    }
   }
-  public async removeAdmin({ id }: UserIdDto) {
-    return await this.prisma.user.update({
-      where: {
-        id,
-      },
-      data: {
-        admin: false,
-      },
-    });
-  }
-  public async isAdmin(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
-    const { apikey } = request.headers;
-    const { admin } = await this.prisma.user.findFirst({
+  public async isAdmin(request: Request) {
+    const apikey = <string>request.headers['x-api-key'];
+    const admin = await this.prisma.user.findFirst({
       where: {
         apikey,
       },
@@ -43,6 +51,7 @@ export class AdminService {
         admin: true,
       },
     });
-    return admin === true;
+    if (admin) return true;
+    throw new UnauthorizedException();
   }
 }

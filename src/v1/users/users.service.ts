@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UpdatePasswordDto, UpdateUsernameDto, UserIdDto } from './users.dto';
+import { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
 import { ApikeyService } from '../apikey/apikey.service';
 import { HashService } from '../hash/hash.service';
 
@@ -14,9 +14,9 @@ export class UsersService {
   public async getAllUsers() {
     return await this.prisma.user.findMany();
   }
-  public async getUser({ id }: UserIdDto) {
+  public async getUser(id: number) {
     try {
-      return await this.prisma.user.findFirst({
+      return await this.prisma.user.findUnique({
         where: {
           id,
         },
@@ -25,7 +25,7 @@ export class UsersService {
       throw new NotFoundException();
     }
   }
-  public async deleteUser({ id }: UserIdDto) {
+  public async deleteUser(id: number) {
     try {
       return await this.prisma.user.delete({
         where: {
@@ -33,10 +33,11 @@ export class UsersService {
         },
       });
     } catch (e) {
+      console.log(e);
       throw new NotFoundException();
     }
   }
-  public async getUsername({ id }: UserIdDto) {
+  public async getUsername(id: number) {
     try {
       return await this.prisma.user.findFirst({
         where: {
@@ -50,10 +51,7 @@ export class UsersService {
       throw new NotFoundException();
     }
   }
-  public async updateUsername(
-    { id }: UserIdDto,
-    { username }: UpdateUsernameDto,
-  ) {
+  public async updateUsername(id: number, { username }: UpdateUsernameDto) {
     try {
       return await this.prisma.user.update({
         where: {
@@ -67,10 +65,7 @@ export class UsersService {
       throw new NotFoundException();
     }
   }
-  public async updatePassword(
-    { id }: UserIdDto,
-    { password }: UpdatePasswordDto,
-  ) {
+  public async updatePassword(id: number, { password }: UpdatePasswordDto) {
     try {
       return await this.prisma.user.update({
         where: {

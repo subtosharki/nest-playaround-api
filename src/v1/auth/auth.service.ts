@@ -10,9 +10,10 @@ export class AuthService {
   constructor(private prisma: PrismaService) {}
   public async validateApiKey(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const user = await this.prisma.user.findUnique({
+    const { apikey } = request.headers;
+    const user = await this.prisma.user.findFirst({
       where: {
-        apikey: request.headers['apikey'],
+        apikey,
       },
     });
     if (user) return true;
