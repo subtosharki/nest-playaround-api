@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
-import { HashService } from '../hash/hash.service';
+import type { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
 import {
   InvalidOldPasswordException,
   PasswordAlreadyInUseException,
   UsernameAlreadyInUseException,
   UserNotFoundException,
 } from '../exceptions/users.exception';
+import { UtilsService } from '../utils/utils.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private prisma: PrismaService,
-    private readonly hashService: HashService,
+    private readonly utilsService: UtilsService,
   ) {}
   public async getAllUsers() {
     return await this.prisma.user.findMany();
@@ -83,16 +83,16 @@ export class UsersService {
         },
       });
       if (
-        !(await this.hashService.compare(
-          await this.hashService.hash(oldPassword),
+        !(await this.utilsService.compare(
+          await this.utilsService.hash(oldPassword),
           password,
         ))
       ) {
         throw new InvalidOldPasswordException();
       }
       if (
-        await this.hashService.compare(
-          await this.hashService.hash(newPassword),
+        await this.utilsService.compare(
+          await this.utilsService.hash(newPassword),
           password,
         )
       ) {
@@ -104,7 +104,7 @@ export class UsersService {
           id,
         },
         data: {
-          password: await this.hashService.hash(newPassword),
+          password: await this.utilsService.hash(newPassword),
         },
       });
     } catch (e) {

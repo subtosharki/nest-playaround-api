@@ -7,8 +7,8 @@ import { LoginModule } from './v1/login/login.module';
 import { SignupModule } from './v1/signup/signup.module';
 import { ApikeyModule } from './v1/apikey/apikey.module';
 import { AdminModule } from './v1/admin/admin.module';
-import { HashModule } from './v1/hash/hash.module';
 import { AuthModule } from './v1/auth/auth.module';
+import { UtilsModule } from './v1/utils/utils.module';
 import helmet from 'helmet';
 
 @Module({
@@ -19,8 +19,8 @@ import helmet from 'helmet';
     SignupModule,
     ApikeyModule,
     AdminModule,
-    HashModule,
     AuthModule,
+    UtilsModule,
   ],
   providers: [PrismaService],
 })

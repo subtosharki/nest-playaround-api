@@ -4,14 +4,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { LoginDto } from './login.dto';
-import { HashService } from '../hash/hash.service';
+import type { LoginDto } from './login.dto';
+import { UtilsService } from '../utils/utils.service';
 
 @Injectable()
 export class LoginService {
   constructor(
     private prisma: PrismaService,
-    private hashService: HashService,
+    private utilsService: UtilsService,
   ) {}
   public async login({ username, password }: LoginDto) {
     try {
@@ -20,7 +20,7 @@ export class LoginService {
           username,
         },
       });
-      if (user && (await this.hashService.compare(password, user.password))) {
+      if (user && (await this.utilsService.compare(password, user.password))) {
         return user;
       }
       throw new UnauthorizedException();

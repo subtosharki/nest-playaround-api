@@ -1,5 +1,5 @@
 import {
-  ExecutionContext,
+  type ExecutionContext,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';

@@ -8,7 +8,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { LoginService } from './login.service';
-import { LoginDto } from './login.dto';
+import type { LoginDto } from './login.dto';
 
 @Controller({ path: 'login', version: '1' })
 export class LoginController {

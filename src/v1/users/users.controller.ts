@@ -12,7 +12,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
+import type { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { AdminGuard } from '../admin/admin.guard';

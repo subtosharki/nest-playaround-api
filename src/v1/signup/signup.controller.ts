@@ -8,7 +8,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { SignupService } from './signup.service';
-import { SignupDto } from './signup.dto';
+import type { SignupDto } from './signup.dto';
 
 @Controller({ path: 'signup', version: '1' })
 export class SignupController {

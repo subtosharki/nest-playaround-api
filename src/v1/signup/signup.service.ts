@@ -1,17 +1,17 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { SignupDto } from './signup.dto';
-import { HashService } from '../hash/hash.service';
+import type { SignupDto } from './signup.dto';
 import {
   PasswordsDoNotMatchException,
   UsernameAlreadyExistsException,
 } from '../exceptions/signup.exception';
+import { UtilsService } from '../utils/utils.service';
 
 @Injectable()
 export class SignupService {
   constructor(
     private prisma: PrismaService,
-    private readonly hashService: HashService,
+    private readonly utilsService: UtilsService,
   ) {}
 
   public async signup({ username, password, password2 }: SignupDto) {
@@ -33,7 +33,7 @@ export class SignupService {
       return await this.prisma.user.create({
         data: {
           username,
-          password: await this.hashService.hash(password),
+          password: await this.utilsService.hash(password),
         },
       });
     } catch (e) {
