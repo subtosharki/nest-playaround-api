@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import type { LoginDto } from './login.dto';
+import { LoginDto } from './login.dto';
 import { UtilsService } from '../utils/utils.service';
 
 @Injectable()

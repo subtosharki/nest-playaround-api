@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import type { SignupDto } from './signup.dto';
+import { SignupDto } from './signup.dto';
 import {
   PasswordsDoNotMatchException,
   UsernameAlreadyExistsException,

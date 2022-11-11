@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import type { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
+import { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
 import {
   InvalidOldPasswordException,
   PasswordAlreadyInUseException,

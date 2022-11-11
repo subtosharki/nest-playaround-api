@@ -12,11 +12,13 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import type { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
+import { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { AdminGuard } from '../admin/admin.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller({ path: 'users', version: '1' })
 @UseGuards(AuthGuard)
 export class UsersController {

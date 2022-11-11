@@ -10,7 +10,9 @@ import {
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { AdminGuard } from './admin.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Admin')
 @UseGuards(AdminGuard)
 @Controller({ path: 'admin', version: '1' })
 export class AdminController {
