@@ -1,7 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
 import { HashService } from '../hash/hash.service';
+import {
+  InvalidOldPasswordException,
+  PasswordAlreadyInUseException,
+  UsernameAlreadyInUseException,
+  UserNotFoundException,
+} from '../exceptions/users.exception';
 
 @Injectable()
 export class UsersService {
@@ -20,7 +26,7 @@ export class UsersService {
         },
       });
     } catch (e) {
-      throw new NotFoundException();
+      throw new UserNotFoundException();
     }
   }
   public async deleteUser(id: number) {
@@ -32,7 +38,7 @@ export class UsersService {
       });
     } catch (e) {
       console.log(e);
-      throw new NotFoundException();
+      throw new UserNotFoundException();
     }
   }
   public async getUsername(id: number) {
@@ -46,7 +52,7 @@ export class UsersService {
         },
       });
     } catch (e) {
-      throw new NotFoundException();
+      throw new UserNotFoundException();
     }
   }
   public async updateUsername(id: number, { username }: UpdateUsernameDto) {
@@ -60,21 +66,49 @@ export class UsersService {
         },
       });
     } catch (e) {
-      throw new NotFoundException();
+      throw new UsernameAlreadyInUseException();
     }
   }
-  public async updatePassword(id: number, { password }: UpdatePasswordDto) {
+  public async updatePassword(
+    id: number,
+    { newPassword, oldPassword }: UpdatePasswordDto,
+  ) {
     try {
+      const { password } = await this.prisma.user.findFirst({
+        where: {
+          id,
+        },
+        select: {
+          password: true,
+        },
+      });
+      if (
+        !(await this.hashService.compare(
+          await this.hashService.hash(oldPassword),
+          password,
+        ))
+      ) {
+        throw new InvalidOldPasswordException();
+      }
+      if (
+        await this.hashService.compare(
+          await this.hashService.hash(newPassword),
+          password,
+        )
+      ) {
+        throw new PasswordAlreadyInUseException();
+      }
+
       return await this.prisma.user.update({
         where: {
           id,
         },
         data: {
-          password: await this.hashService.hash(password),
+          password: await this.hashService.hash(newPassword),
         },
       });
     } catch (e) {
-      throw new NotFoundException();
+      throw new UserNotFoundException();
     }
   }
 }

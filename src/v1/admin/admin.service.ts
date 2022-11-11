@@ -1,6 +1,7 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Request } from 'express';
+import { MissingPermissionException } from '../exceptions/permission.exception';
 
 @Injectable()
 export class AdminService {
@@ -13,45 +14,53 @@ export class AdminService {
     });
   }
   public async setAdmin(id: number) {
-    const { admin } = await this.prisma.user.findFirst({
-      where: {
-        id,
-      },
-      select: {
-        admin: true,
-      },
-    });
-    if (admin) {
-      return await this.prisma.user.update({
+    try {
+      const { admin } = await this.prisma.user.findFirst({
         where: {
           id,
         },
-        data: {
-          admin: false,
-        },
-      });
-    } else {
-      return await this.prisma.user.update({
-        where: {
-          id,
-        },
-        data: {
+        select: {
           admin: true,
         },
       });
+      if (admin) {
+        return await this.prisma.user.update({
+          where: {
+            id,
+          },
+          data: {
+            admin: false,
+          },
+        });
+      } else {
+        return await this.prisma.user.update({
+          where: {
+            id,
+          },
+          data: {
+            admin: true,
+          },
+        });
+      }
+    } catch (e) {
+      throw new InternalServerErrorException(e);
     }
   }
   public async isAdmin(request: Request) {
-    const apikey = <string>request.headers['x-api-key'];
-    const admin = await this.prisma.user.findFirst({
-      where: {
-        apikey,
-      },
-      select: {
-        admin: true,
-      },
-    });
-    if (admin) return true;
-    throw new UnauthorizedException();
+    try {
+      const apikey = <string>request.headers['x-api-key'];
+      const admin = await this.prisma.user.findFirst({
+        where: {
+          apikey,
+        },
+        select: {
+          admin: true,
+        },
+      });
+      if (admin) return true;
+      throw new MissingPermissionException('ADMIN');
+    } catch (e) {
+      throw new InternalServerErrorException(e);
+    }
   }
 }

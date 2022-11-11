@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './login.dto';
 import { HashService } from '../hash/hash.service';
@@ -10,13 +14,18 @@ export class LoginService {
     private hashService: HashService,
   ) {}
   public async login({ username, password }: LoginDto) {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        username,
-      },
-    });
-    if (user && (await this.hashService.compare(password, user.password)))
-      return user;
-    throw new UnauthorizedException();
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: {
+          username,
+        },
+      });
+      if (user && (await this.hashService.compare(password, user.password))) {
+        return user;
+      }
+      throw new UnauthorizedException();
+    } catch (e) {
+      throw new InternalServerErrorException(e);
+    }
   }
 }
