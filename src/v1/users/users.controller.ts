@@ -43,9 +43,9 @@ export class UsersController {
   @UsePipes(ValidationPipe)
   async updateUsername(
     @Param('id', ParseIntPipe) id: number,
-    @Body('username') { username }: UpdateUsernameDto,
+    @Body() body: UpdateUsernameDto,
   ) {
-    return await this.userService.updateUsername(id, username);
+    return await this.userService.updateUsername(id, body);
   }
   @Patch('/:id/password')
   @UsePipes(ValidationPipe)
