@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class UtilsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
   public async getNewAPIKey(id: number) {
     try {
       return await this.prisma.user.update({

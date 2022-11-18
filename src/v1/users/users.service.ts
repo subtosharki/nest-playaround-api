@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
 import {
-  InvalidOldPasswordException,
-  PasswordAlreadyInUseException,
-  UsernameAlreadyInUseException,
+  AlreadyInUseException,
+  InUseTypes,
+  InvalidPropertyException,
+  PropertyTypes,
   UserNotFoundException,
 } from '../exceptions/users.exception';
 import { UtilsService } from '../utils/utils.service';
@@ -12,7 +13,7 @@ import { UtilsService } from '../utils/utils.service';
 @Injectable()
 export class UsersService {
   constructor(
-    private prisma: PrismaService,
+    private readonly prisma: PrismaService,
     private readonly utilsService: UtilsService,
   ) {}
   public async getAllUsers() {
@@ -66,14 +67,17 @@ export class UsersService {
         },
       });
     } catch (e) {
-      throw new UsernameAlreadyInUseException();
+      throw new AlreadyInUseException(InUseTypes.USERNAME);
     }
   }
   public async updatePassword(
     id: number,
-    { newPassword, oldPassword }: UpdatePasswordDto,
+    { newPassword, oldPassword, confirmationPassword }: UpdatePasswordDto,
   ) {
     try {
+      if (newPassword !== confirmationPassword) {
+        throw new InvalidPropertyException(PropertyTypes.CONFIRMATION_PASSWORD);
+      }
       const { password } = await this.prisma.user.findFirst({
         where: {
           id,
@@ -88,7 +92,7 @@ export class UsersService {
           password,
         ))
       ) {
-        throw new InvalidOldPasswordException();
+        throw new InvalidPropertyException(PropertyTypes.OLD_PASSWORD);
       }
       if (
         await this.utilsService.compare(
@@ -96,7 +100,7 @@ export class UsersService {
           password,
         )
       ) {
-        throw new PasswordAlreadyInUseException();
+        throw new AlreadyInUseException(InUseTypes.PASSWORD);
       }
 
       return await this.prisma.user.update({

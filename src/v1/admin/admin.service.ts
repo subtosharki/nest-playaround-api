@@ -5,7 +5,7 @@ import { MissingPermissionException } from '../exceptions/permission.exception';
 
 @Injectable()
 export class AdminService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
   public async getAllAdmins() {
     return await this.prisma.user.findMany({
       where: {

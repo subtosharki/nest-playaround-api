@@ -10,7 +10,7 @@ import { UtilsService } from '../utils/utils.service';
 @Injectable()
 export class SignupService {
   constructor(
-    private prisma: PrismaService,
+    private readonly prisma: PrismaService,
     private readonly utilsService: UtilsService,
   ) {}
 

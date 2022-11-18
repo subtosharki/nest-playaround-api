@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Post,
-  HttpStatus,
-  HttpCode,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -16,7 +14,6 @@ import { ApiTags } from '@nestjs/swagger';
 export class SignupController {
   constructor(private readonly signupService: SignupService) {}
   @Post('/')
-  @HttpCode(HttpStatus.CREATED)
   @UsePipes(ValidationPipe)
   async signup(@Body() body: SignupDto) {
     return await this.signupService.signup(body);

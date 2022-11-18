@@ -10,8 +10,8 @@ import { UtilsService } from '../utils/utils.service';
 @Injectable()
 export class LoginService {
   constructor(
-    private prisma: PrismaService,
-    private utilsService: UtilsService,
+    private readonly prisma: PrismaService,
+    private readonly utilsService: UtilsService,
   ) {}
   public async login({ username, password }: LoginDto) {
     try {

@@ -1,14 +1,17 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-export class PasswordAlreadyInUseException extends HttpException {
-  constructor() {
-    super('Password already in use', HttpStatus.BAD_REQUEST);
-  }
+export enum InUseTypes {
+  'USERNAME',
+  'PASSWORD',
+}
+export enum PropertyTypes {
+  'OLD_PASSWORD',
+  'CONFIRMATION_PASSWORD',
 }
 
-export class UsernameAlreadyInUseException extends HttpException {
-  constructor() {
-    super('Username already in use', HttpStatus.BAD_REQUEST);
+export class AlreadyInUseException extends HttpException {
+  constructor(propertyInUse: InUseTypes) {
+    super(propertyInUse + ': Already in use', HttpStatus.BAD_REQUEST);
   }
 }
 
@@ -18,8 +21,8 @@ export class UserNotFoundException extends HttpException {
   }
 }
 
-export class InvalidOldPasswordException extends HttpException {
-  constructor() {
-    super('Invalid old password', HttpStatus.BAD_REQUEST);
+export class InvalidPropertyException extends HttpException {
+  constructor(property: PropertyTypes) {
+    super(property + ': Invalid', HttpStatus.BAD_REQUEST);
   }
 }

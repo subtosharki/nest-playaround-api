@@ -1,8 +1,6 @@
 import {
   Body,
   Controller,
-  HttpCode,
-  HttpStatus,
   Post,
   UsePipes,
   ValidationPipe,
@@ -16,7 +14,6 @@ import { ApiTags } from '@nestjs/swagger';
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}
   @Post('/')
-  @HttpCode(HttpStatus.OK)
   @UsePipes(ValidationPipe)
   public async login(@Body() body: LoginDto) {
     return await this.loginService.login(body);

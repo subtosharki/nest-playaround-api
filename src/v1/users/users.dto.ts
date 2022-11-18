@@ -25,4 +25,9 @@ export class UpdatePasswordDto {
   @IsString()
   @IsNotEmpty()
   oldPassword: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  confirmationPassword: string;
 }

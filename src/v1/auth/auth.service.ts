@@ -8,7 +8,7 @@ import { InvalidAPIKeyException } from '../exceptions/auth.exception';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
   public async validateApiKey(context: ExecutionContext) {
     try {
       const request = context.switchToHttp().getRequest();
