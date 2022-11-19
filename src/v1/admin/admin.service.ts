@@ -47,20 +47,16 @@ export class AdminService {
     }
   }
   public async isAdmin(request: Request) {
-    try {
-      const apikey = <string>request.headers['x-api-key'];
-      const admin = await this.prisma.user.findFirst({
-        where: {
-          apikey,
-        },
-        select: {
-          admin: true,
-        },
-      });
-      if (admin) return true;
-      throw new MissingPermissionException('ADMIN');
-    } catch (e) {
-      throw new InternalServerErrorException(e);
-    }
+    const apikey = String(request.headers['x-api-key']);
+    const admin = await this.prisma.user.findFirst({
+      where: {
+        apikey,
+      },
+      select: {
+        admin: true,
+      },
+    });
+    if (admin) return true;
+    throw new MissingPermissionException('ADMIN');
   }
 }

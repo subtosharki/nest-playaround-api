@@ -1,8 +1,4 @@
-import {
-  type ExecutionContext,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { InvalidAPIKeyException } from '../exceptions/auth.exception';
 
@@ -10,18 +6,14 @@ import { InvalidAPIKeyException } from '../exceptions/auth.exception';
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
   public async validateApiKey(context: ExecutionContext) {
-    try {
-      const request = context.switchToHttp().getRequest();
-      const { apikey } = request.headers;
-      const user = await this.prisma.user.findFirst({
-        where: {
-          apikey,
-        },
-      });
-      if (user) return true;
-      throw new InvalidAPIKeyException();
-    } catch (e) {
-      throw new InternalServerErrorException(e);
-    }
+    const request = context.switchToHttp().getRequest();
+    const { apikey } = request.headers;
+    const user = await this.prisma.user.findFirst({
+      where: {
+        apikey,
+      },
+    });
+    if (user) return true;
+    throw new InvalidAPIKeyException();
   }
 }

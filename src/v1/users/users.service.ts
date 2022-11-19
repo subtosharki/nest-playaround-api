@@ -8,14 +8,11 @@ import {
   PropertyTypes,
   UserNotFoundException,
 } from '../exceptions/users.exception';
-import { UtilsService } from '../utils/utils.service';
+import { compare, genSalt, hash as genHash } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly utilsService: UtilsService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
   public async getAllUsers() {
     return await this.prisma.user.findMany();
   }
@@ -74,45 +71,33 @@ export class UsersService {
     id: number,
     { newPassword, oldPassword, confirmationPassword }: UpdatePasswordDto,
   ) {
-    try {
-      if (newPassword !== confirmationPassword) {
-        throw new InvalidPropertyException(PropertyTypes.CONFIRMATION_PASSWORD);
-      }
-      const { password } = await this.prisma.user.findFirst({
-        where: {
-          id,
-        },
-        select: {
-          password: true,
-        },
-      });
-      if (
-        !(await this.utilsService.compare(
-          await this.utilsService.hash(oldPassword),
-          password,
-        ))
-      ) {
-        throw new InvalidPropertyException(PropertyTypes.OLD_PASSWORD);
-      }
-      if (
-        await this.utilsService.compare(
-          await this.utilsService.hash(newPassword),
-          password,
-        )
-      ) {
-        throw new AlreadyInUseException(InUseTypes.PASSWORD);
-      }
-
-      return await this.prisma.user.update({
-        where: {
-          id,
-        },
-        data: {
-          password: await this.utilsService.hash(newPassword),
-        },
-      });
-    } catch (e) {
-      throw new UserNotFoundException();
+    if (newPassword !== confirmationPassword) {
+      throw new InvalidPropertyException(PropertyTypes.CONFIRMATION_PASSWORD);
     }
+    const { password } = await this.prisma.user.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        password: true,
+      },
+    });
+    if (
+      !(await compare(await genHash(password, await genSalt()), oldPassword))
+    ) {
+      throw new InvalidPropertyException(PropertyTypes.OLD_PASSWORD);
+    }
+    if (!(await compare(await genHash(password, await genSalt()), password))) {
+      throw new AlreadyInUseException(InUseTypes.PASSWORD);
+    }
+
+    return await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        password: await genHash(password, await genSalt()),
+      },
+    });
   }
 }
