@@ -5,7 +5,7 @@ import type {
   InvalidPropertyException,
 } from '../exceptions/users.exception';
 
-export type ListOfUsersData = User[];
+export type ListOfUsersData = Array<User>;
 export type UserReturnData = User | UserNotFoundException;
 export type UsernameReturnData = User['username'] | UserNotFoundException;
 export type UpdateUsernameReturnData =
