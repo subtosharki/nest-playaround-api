@@ -25,7 +25,7 @@ import helmet from 'helmet';
   providers: [PrismaService],
 })
 export class AppModule implements NestModule {
-  async configure(consumer: MiddlewareConsumer): Promise<void> {
+  public async configure(consumer: MiddlewareConsumer): Promise<void> {
     consumer.apply(compression, helmet()).forRoutes('*');
   }
 }

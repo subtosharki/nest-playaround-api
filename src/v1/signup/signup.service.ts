@@ -10,8 +10,7 @@ import type { User } from '@prisma/client';
 
 @Injectable()
 export class SignupService {
-  constructor(private readonly prisma: PrismaService) {}
-
+  public constructor(private readonly prisma: PrismaService) {}
   public async signup({
     username,
     password,

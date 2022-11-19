@@ -6,7 +6,7 @@ import type { User } from '@prisma/client';
 
 @Injectable()
 export class LoginService {
-  constructor(private readonly prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
   public async login({ username, password }: LoginDto): Promise<User> {
     const user = await this.prisma.user.findFirst({
       where: {

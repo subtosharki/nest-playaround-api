@@ -16,13 +16,13 @@ import type { User } from '@prisma/client';
 @UseGuards(AdminGuard)
 @Controller({ path: 'admin', version: '1' })
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  public constructor(private readonly adminService: AdminService) {}
   @Get('/')
-  async getAllAdmins(): Promise<ListOfUsersData> {
+  public async getAllAdmins(): Promise<ListOfUsersData> {
     return await this.adminService.getAllAdmins();
   }
   @Post('/add/:id')
-  async setAdmin(@Param('id', ParseIntPipe) id: number): Promise<User> {
+  public async setAdmin(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return await this.adminService.setAdmin(id);
   }
 }

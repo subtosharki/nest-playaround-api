@@ -8,7 +8,7 @@ import type { ListOfUsersData } from '../types/types';
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
   public async getAllAdmins(): Promise<ListOfUsersData> {
     return await this.prisma.user.findMany({
       where: {

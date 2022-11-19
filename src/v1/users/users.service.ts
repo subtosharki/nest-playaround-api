@@ -19,7 +19,7 @@ import type {
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
   public async getAllUsers(): Promise<ListOfUsersData> {
     return await this.prisma.user.findMany();
   }

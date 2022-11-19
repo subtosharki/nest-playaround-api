@@ -10,19 +10,19 @@ export enum PropertyTypes {
 }
 
 export class AlreadyInUseException extends HttpException {
-  constructor(propertyInUse: InUseTypes) {
+  public constructor(propertyInUse: InUseTypes) {
     super(propertyInUse + ': Already in use', HttpStatus.BAD_REQUEST);
   }
 }
 
 export class UserNotFoundException extends HttpException {
-  constructor() {
+  public constructor() {
     super('User not found', HttpStatus.NOT_FOUND);
   }
 }
 
 export class InvalidPropertyException extends HttpException {
-  constructor(property: PropertyTypes) {
+  public constructor(property: PropertyTypes) {
     super(property + ': Invalid', HttpStatus.BAD_REQUEST);
   }
 }

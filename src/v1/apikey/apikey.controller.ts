@@ -6,9 +6,11 @@ import { User } from '@prisma/client';
 @ApiTags('API Key')
 @Controller({ path: 'apikey', version: '1' })
 export class ApikeyController {
-  constructor(private readonly utilsService: UtilsService) {}
+  public constructor(private readonly utilsService: UtilsService) {}
   @Patch('/:id')
-  async getNewApiKey(@Param('id', ParseIntPipe) id: number): Promise<User> {
+  public async getNewApiKey(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<User> {
     return await this.utilsService.getNewAPIKey(id);
   }
 }

@@ -27,7 +27,7 @@ import type {
 @Controller({ path: 'users', version: '1' })
 @UseGuards(AuthGuard)
 export class UsersController {
-  constructor(private readonly userService: UsersService) {}
+  public constructor(private readonly userService: UsersService) {}
   @Get('/')
   public async getAllUsers(): Promise<ListOfUsersData> {
     return await this.userService.getAllUsers();
@@ -54,7 +54,7 @@ export class UsersController {
   }
   @Patch('/:id/username')
   @UsePipes(ValidationPipe)
-  async updateUsername(
+  public async updateUsername(
     @Param('id', ParseIntPipe) id: number,
     @Body() { username }: UpdateUsernameDto,
   ): Promise<UpdateUsernameReturnData> {
@@ -62,7 +62,7 @@ export class UsersController {
   }
   @Patch('/:id/password')
   @UsePipes(ValidationPipe)
-  async updatePassword(
+  public async updatePassword(
     @Param('id', ParseIntPipe) id: number,
     @Body('newPassword') { newPassword }: UpdatePasswordDto,
     @Body('oldPassword') { oldPassword }: UpdatePasswordDto,

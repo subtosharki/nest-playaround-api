@@ -6,7 +6,7 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class UtilsService {
-  constructor(private readonly prisma: PrismaService) {}
+  public constructor(private readonly prisma: PrismaService) {}
   public async getNewAPIKey(id: number): Promise<User> {
     const user = await this.prisma.user.findFirst({
       where: {
