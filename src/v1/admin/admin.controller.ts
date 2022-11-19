@@ -9,6 +9,8 @@ import {
 import { AdminService } from './admin.service';
 import { AdminGuard } from './admin.guard';
 import { ApiTags } from '@nestjs/swagger';
+import type { ListOfUsersData } from '../types/types';
+import type { User } from '@prisma/client';
 
 @ApiTags('Admin')
 @UseGuards(AdminGuard)
@@ -16,11 +18,11 @@ import { ApiTags } from '@nestjs/swagger';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
   @Get('/')
-  async getAllAdmins() {
+  async getAllAdmins(): Promise<ListOfUsersData> {
     return await this.adminService.getAllAdmins();
   }
   @Post('/add/:id')
-  async setAdmin(@Param('id', ParseIntPipe) id: number) {
+  async setAdmin(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return await this.adminService.setAdmin(id);
   }
 }

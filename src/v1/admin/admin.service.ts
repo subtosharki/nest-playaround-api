@@ -1,54 +1,56 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { Request } from 'express';
 import { MissingPermissionException } from '../exceptions/permission.exception';
+import type { User } from '@prisma/client';
+import { UserNotFoundException } from '../exceptions/users.exception';
+import type { ListOfUsersData } from '../types/types';
 
 @Injectable()
 export class AdminService {
   constructor(private readonly prisma: PrismaService) {}
-  public async getAllAdmins() {
+  public async getAllAdmins(): Promise<ListOfUsersData> {
     return await this.prisma.user.findMany({
       where: {
         admin: true,
       },
     });
   }
-  public async setAdmin(id: number) {
-    try {
-      const { admin } = await this.prisma.user.findFirst({
+  public async setAdmin(id: number): Promise<User> {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        admin: true,
+      },
+    });
+    if (!user) {
+      throw new UserNotFoundException();
+    }
+    if (user.admin) {
+      return await this.prisma.user.update({
         where: {
           id,
         },
-        select: {
+        data: {
+          admin: false,
+        },
+      });
+    } else {
+      return await this.prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
           admin: true,
         },
       });
-      if (admin) {
-        return await this.prisma.user.update({
-          where: {
-            id,
-          },
-          data: {
-            admin: false,
-          },
-        });
-      } else {
-        return await this.prisma.user.update({
-          where: {
-            id,
-          },
-          data: {
-            admin: true,
-          },
-        });
-      }
-    } catch (e) {
-      throw new InternalServerErrorException(e);
     }
   }
-  public async isAdmin(request: Request) {
+  public async isAdmin(request: Request): Promise<boolean> {
     const apikey = String(request.headers['x-api-key']);
-    const admin = await this.prisma.user.findFirst({
+    const user = await this.prisma.user.findFirst({
       where: {
         apikey,
       },
@@ -56,7 +58,7 @@ export class AdminService {
         admin: true,
       },
     });
-    if (admin) return true;
+    if (user.admin) return true;
     throw new MissingPermissionException('ADMIN');
   }
 }

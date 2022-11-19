@@ -6,12 +6,17 @@ import {
   UsernameAlreadyExistsException,
 } from '../exceptions/signup.exception';
 import { genSalt, hash as genHash } from 'bcrypt';
+import type { User } from '@prisma/client';
 
 @Injectable()
 export class SignupService {
   constructor(private readonly prisma: PrismaService) {}
 
-  public async signup({ username, password, password2 }: SignupDto) {
+  public async signup({
+    username,
+    password,
+    password2,
+  }: SignupDto): Promise<User> {
     const usernames = await this.prisma.user.findMany({
       select: {
         username: true,

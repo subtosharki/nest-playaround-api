@@ -9,72 +9,95 @@ import {
   UserNotFoundException,
 } from '../exceptions/users.exception';
 import { compare, genSalt, hash as genHash } from 'bcrypt';
+import type {
+  ListOfUsersData,
+  UpdatePasswordReturnData,
+  UpdateUsernameReturnData,
+  UsernameReturnData,
+  UserReturnData,
+} from '../types/types';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
-  public async getAllUsers() {
+  public async getAllUsers(): Promise<ListOfUsersData> {
     return await this.prisma.user.findMany();
   }
-  public async getUser(id: number) {
-    try {
-      return await this.prisma.user.findUnique({
-        where: {
-          id,
-        },
-      });
-    } catch (e) {
+  public async getUser(id: number): Promise<UserReturnData> {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id,
+      },
+    });
+    if (!user) {
       throw new UserNotFoundException();
     }
+    return user;
   }
-  public async deleteUser(id: number) {
-    try {
-      return await this.prisma.user.delete({
-        where: {
-          id,
-        },
-      });
-    } catch (e) {
-      console.log(e);
+  public async deleteUser(id: number): Promise<UserReturnData> {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id,
+      },
+    });
+    if (!user) {
       throw new UserNotFoundException();
     }
+    return await this.prisma.user.delete({
+      where: {
+        id,
+      },
+    });
   }
-  public async getUsername(id: number) {
-    try {
-      return await this.prisma.user.findFirst({
-        where: {
-          id,
-        },
-        select: {
-          username: true,
-        },
-      });
-    } catch (e) {
+  public async getUsername(id: number): Promise<UsernameReturnData> {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        username: true,
+      },
+    });
+    if (!user) {
       throw new UserNotFoundException();
     }
+    return user.username;
   }
-  public async updateUsername(id: number, { username }: UpdateUsernameDto) {
-    try {
-      return await this.prisma.user.update({
-        where: {
-          id,
-        },
-        data: {
-          username,
-        },
-      });
-    } catch (e) {
+  public async updateUsername(
+    id: number,
+    { username }: UpdateUsernameDto,
+  ): Promise<UpdateUsernameReturnData> {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        username: true,
+      },
+    });
+    if (!user) {
+      throw new UserNotFoundException();
+    }
+    if (user.username === username) {
       throw new AlreadyInUseException(InUseTypes.USERNAME);
     }
+    return await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        username,
+      },
+    });
   }
   public async updatePassword(
     id: number,
     { newPassword, oldPassword, confirmationPassword }: UpdatePasswordDto,
-  ) {
+  ): Promise<UpdatePasswordReturnData> {
     if (newPassword !== confirmationPassword) {
       throw new InvalidPropertyException(PropertyTypes.CONFIRMATION_PASSWORD);
     }
-    const { password } = await this.prisma.user.findFirst({
+    const user = await this.prisma.user.findFirst({
       where: {
         id,
       },
@@ -82,21 +105,31 @@ export class UsersService {
         password: true,
       },
     });
+    if (!user) {
+      throw new UserNotFoundException();
+    }
     if (
-      !(await compare(await genHash(password, await genSalt()), oldPassword))
+      !(await compare(
+        await genHash(user.password, await genSalt()),
+        oldPassword,
+      ))
     ) {
       throw new InvalidPropertyException(PropertyTypes.OLD_PASSWORD);
     }
-    if (!(await compare(await genHash(password, await genSalt()), password))) {
+    if (
+      await compare(
+        await genHash(user.password, await genSalt()),
+        user.password,
+      )
+    ) {
       throw new AlreadyInUseException(InUseTypes.PASSWORD);
     }
-
     return await this.prisma.user.update({
       where: {
         id,
       },
       data: {
-        password: await genHash(password, await genSalt()),
+        password: await genHash(user.password, await genSalt()),
       },
     });
   }

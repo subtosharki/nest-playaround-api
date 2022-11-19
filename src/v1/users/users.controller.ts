@@ -15,6 +15,13 @@ import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { AdminGuard } from '../admin/admin.guard';
 import { ApiTags } from '@nestjs/swagger';
+import type {
+  ListOfUsersData,
+  UpdatePasswordReturnData,
+  UpdateUsernameReturnData,
+  UsernameReturnData,
+  UserReturnData,
+} from '../types/types';
 
 @ApiTags('Users')
 @Controller({ path: 'users', version: '1' })
@@ -22,21 +29,27 @@ import { ApiTags } from '@nestjs/swagger';
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
   @Get('/')
-  async getAllUsers() {
+  public async getAllUsers(): Promise<ListOfUsersData> {
     return await this.userService.getAllUsers();
   }
   @Get('/:id')
-  async getUser(@Param('id', ParseIntPipe) id: number) {
+  public async getUser(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<UserReturnData> {
     return await this.userService.getUser(id);
   }
   @UseGuards(AdminGuard)
   @Delete('/:id')
-  async deleteUser(@Param('id', ParseIntPipe) id: number) {
+  public async deleteUser(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<UserReturnData> {
     return await this.userService.deleteUser(id);
   }
 
   @Get('/:id/username')
-  async getUsername(@Param('id', ParseIntPipe) id: number) {
+  public async getUsername(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<UsernameReturnData> {
     return await this.userService.getUsername(id);
   }
   @Patch('/:id/username')
@@ -44,17 +57,17 @@ export class UsersController {
   async updateUsername(
     @Param('id', ParseIntPipe) id: number,
     @Body() { username }: UpdateUsernameDto,
-  ) {
+  ): Promise<UpdateUsernameReturnData> {
     return await this.userService.updateUsername(id, { username });
   }
   @Patch('/:id/password')
   @UsePipes(ValidationPipe)
   async updatePassword(
     @Param('id', ParseIntPipe) id: number,
-    @Body('body') { newPassword }: UpdatePasswordDto,
+    @Body('newPassword') { newPassword }: UpdatePasswordDto,
     @Body('oldPassword') { oldPassword }: UpdatePasswordDto,
     @Body('confirmationPassword') { confirmationPassword }: UpdatePasswordDto,
-  ) {
+  ): Promise<UpdatePasswordReturnData> {
     return await this.userService.updatePassword(id, {
       newPassword,
       oldPassword,

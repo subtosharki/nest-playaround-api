@@ -5,7 +5,7 @@ import { InvalidAPIKeyException } from '../exceptions/auth.exception';
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
-  public async validateApiKey(context: ExecutionContext) {
+  public async validateApiKey(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const { apikey } = request.headers;
     const user = await this.prisma.user.findFirst({
