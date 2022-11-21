@@ -5,22 +5,22 @@ export class UpdateUsernameDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  username: string;
+  public username: string;
 }
 
 export class UpdatePasswordDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  newPassword: string;
+  public newPassword: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  oldPassword: string;
+  public oldPassword: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  confirmationPassword: string;
+  public confirmationPassword: string;
 }

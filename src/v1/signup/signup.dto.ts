@@ -5,15 +5,15 @@ export class SignupDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  username: string;
+  public username: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  password: string;
+  public password: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  password2: string;
+  public password2: string;
 }
