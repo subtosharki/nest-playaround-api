@@ -9,7 +9,7 @@ import {
 import { AdminService } from './admin.service';
 import { AdminGuard } from './admin.guard';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import type { ListOfUsersData } from '../types/types';
+import type { ListOfUsersData } from '../types';
 import type { User } from '@prisma/client';
 
 @ApiTags('Admin')

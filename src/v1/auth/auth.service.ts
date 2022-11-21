@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { ERROR_MESSAGES } from '../types/consts';
+import { ERROR_MESSAGES } from '../types';
 
 @Injectable()
 export class AuthService {

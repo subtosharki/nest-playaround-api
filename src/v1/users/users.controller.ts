@@ -21,7 +21,7 @@ import type {
   UpdateUsernameReturnData,
   UsernameReturnData,
   UserReturnData,
-} from '../types/types';
+} from '../types';
 
 @ApiTags('Users')
 @Controller({ path: 'users', version: '1' })

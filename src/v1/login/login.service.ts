@@ -2,8 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './login.dto';
 import { compare } from 'bcrypt';
-import type { UserAPIKeyReturnData } from '../types/types';
-import { ERROR_MESSAGES } from '../types/consts';
+import { ERROR_MESSAGES, type UserAPIKeyReturnData } from '../types';
 
 @Injectable()
 export class LoginService {

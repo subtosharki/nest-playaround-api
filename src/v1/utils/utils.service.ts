@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuid } from 'uuid';
 import { User } from '@prisma/client';
-import { ERROR_MESSAGES } from '../types/consts';
+import { ERROR_MESSAGES } from '../types';
 
 @Injectable()
 export class UtilsService {

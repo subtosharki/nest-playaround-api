@@ -9,7 +9,7 @@ import { LoginService } from './login.service';
 import { LoginDto } from './login.dto';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UserAPIKeyReturnData as UserAPIKeyReturnDataClass } from './login.dto';
-import type { UserAPIKeyReturnData } from '../types/types';
+import type { UserAPIKeyReturnData } from '../types';
 
 @ApiTags('Login')
 @Controller({ path: 'login', version: '1' })

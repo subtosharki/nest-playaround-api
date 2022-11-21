@@ -2,8 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { Request } from 'express';
 import type { User } from '@prisma/client';
-import type { ListOfUsersData } from '../types/types';
-import { ERROR_MESSAGES } from '../types/consts';
+import { ERROR_MESSAGES, type ListOfUsersData } from '../types';
 
 @Injectable()
 export class AdminService {

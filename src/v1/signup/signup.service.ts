@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { SignupDto } from './signup.dto';
 import { genSalt, hash as genHash } from 'bcrypt';
 import type { User } from '@prisma/client';
-import { ERROR_MESSAGES } from '../types/consts';
+import { ERROR_MESSAGES } from '../types';
 
 @Injectable()
 export class SignupService {

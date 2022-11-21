@@ -8,8 +8,8 @@ import type {
   UpdateUsernameReturnData,
   UsernameReturnData,
   UserReturnData,
-} from '../types/types';
-import { ERROR_MESSAGES } from '../types/consts';
+} from '../types';
+import { ERROR_MESSAGES } from '../types';
 
 @Injectable()
 export class UsersService {
