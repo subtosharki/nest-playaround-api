@@ -1,11 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
-import {
-  AlreadyInUseException,
-  InvalidPropertyException,
-  UserNotFoundException,
-} from '../exceptions/users.exception';
 import { compare, genSalt, hash as genHash } from 'bcrypt';
 import type {
   ListOfUsersData,
@@ -14,7 +9,7 @@ import type {
   UsernameReturnData,
   UserReturnData,
 } from '../types/types';
-import { InUseTypes, PropertyTypes } from '../types/types';
+import { ERROR_MESSAGES } from '../types/consts';
 
 @Injectable()
 export class UsersService {
@@ -29,7 +24,10 @@ export class UsersService {
       },
     });
     if (!user) {
-      throw new UserNotFoundException();
+      throw new HttpException(
+        ERROR_MESSAGES.NOT_FOUND.USER,
+        HttpStatus.NOT_FOUND,
+      );
     }
     return user;
   }
@@ -40,7 +38,10 @@ export class UsersService {
       },
     });
     if (!user) {
-      throw new UserNotFoundException();
+      throw new HttpException(
+        ERROR_MESSAGES.NOT_FOUND.USER,
+        HttpStatus.NOT_FOUND,
+      );
     }
     return await this.prisma.user.delete({
       where: {
@@ -58,7 +59,10 @@ export class UsersService {
       },
     });
     if (!user) {
-      throw new UserNotFoundException();
+      throw new HttpException(
+        ERROR_MESSAGES.NOT_FOUND.USER,
+        HttpStatus.NOT_FOUND,
+      );
     }
     return user.username;
   }
@@ -76,13 +80,22 @@ export class UsersService {
       },
     });
     if (!user) {
-      throw new UserNotFoundException();
+      throw new HttpException(
+        ERROR_MESSAGES.NOT_FOUND.USER,
+        HttpStatus.NOT_FOUND,
+      );
     }
     if (user.username === username) {
-      throw new AlreadyInUseException(InUseTypes.USERNAME);
+      throw new HttpException(
+        ERROR_MESSAGES.ALREADY_EXISTS.USERNAME,
+        HttpStatus.BAD_REQUEST,
+      );
     }
     if (!(await compare(password, user.password))) {
-      throw new InvalidPropertyException(PropertyTypes.CONFIRMATION_PASSWORD);
+      throw new HttpException(
+        ERROR_MESSAGES.INVALID.CONFIRMATION_PASSWORD,
+        HttpStatus.BAD_REQUEST,
+      );
     }
     return await this.prisma.user.update({
       where: {
@@ -98,7 +111,10 @@ export class UsersService {
     { newPassword, oldPassword, confirmationPassword }: UpdatePasswordDto,
   ): Promise<UpdatePasswordReturnData> {
     if (newPassword !== confirmationPassword) {
-      throw new InvalidPropertyException(PropertyTypes.CONFIRMATION_PASSWORD);
+      throw new HttpException(
+        ERROR_MESSAGES.INVALID.CONFIRMATION_PASSWORD,
+        HttpStatus.BAD_REQUEST,
+      );
     }
     const user = await this.prisma.user.findFirst({
       where: {
@@ -109,30 +125,32 @@ export class UsersService {
       },
     });
     if (!user) {
-      throw new UserNotFoundException();
+      throw new HttpException(ERROR_MESSAGES.NOT_FOUND.USER, 404);
     }
-    if (
-      !(await compare(
-        await genHash(user.password, await genSalt()),
-        oldPassword,
-      ))
-    ) {
-      throw new InvalidPropertyException(PropertyTypes.OLD_PASSWORD);
+    const [oldPasswordMatches, newPasswordIsInUse, hashedPassword] =
+      await Promise.all([
+        compare(oldPassword, user.password),
+        compare(newPassword, user.password),
+        genHash(newPassword, await genSalt()),
+      ]);
+    if (!oldPasswordMatches) {
+      throw new HttpException(
+        ERROR_MESSAGES.INVALID.OLD_PASSWORD,
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    if (
-      await compare(
-        await genHash(user.password, await genSalt()),
-        user.password,
-      )
-    ) {
-      throw new AlreadyInUseException(InUseTypes.PASSWORD);
+    if (newPasswordIsInUse) {
+      throw new HttpException(
+        ERROR_MESSAGES.IN_USE.PASSWORD,
+        HttpStatus.BAD_REQUEST,
+      );
     }
     return await this.prisma.user.update({
       where: {
         id,
       },
       data: {
-        password: await genHash(user.password, await genSalt()),
+        password: hashedPassword,
       },
     });
   }

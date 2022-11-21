@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { UserNotFoundException } from '../exceptions/users.exception';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuid } from 'uuid';
 import { User } from '@prisma/client';
+import { ERROR_MESSAGES } from '../types/consts';
 
 @Injectable()
 export class UtilsService {
@@ -14,7 +14,10 @@ export class UtilsService {
       },
     });
     if (!user) {
-      throw new UserNotFoundException();
+      throw new HttpException(
+        ERROR_MESSAGES.NOT_FOUND.USER,
+        HttpStatus.NOT_FOUND,
+      );
     }
     return await this.prisma.user.update({
       where: {

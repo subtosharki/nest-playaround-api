@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { Request } from 'express';
-import { MissingPermissionException } from '../exceptions/permission.exception';
 import type { User } from '@prisma/client';
-import { UserNotFoundException } from '../exceptions/users.exception';
 import type { ListOfUsersData } from '../types/types';
+import { ERROR_MESSAGES } from '../types/consts';
 
 @Injectable()
 export class AdminService {
@@ -26,7 +25,10 @@ export class AdminService {
       },
     });
     if (!user) {
-      throw new UserNotFoundException();
+      throw new HttpException(
+        ERROR_MESSAGES.NOT_FOUND.USER,
+        HttpStatus.NOT_FOUND,
+      );
     }
     if (user.admin) {
       return await this.prisma.user.update({
@@ -59,6 +61,9 @@ export class AdminService {
       },
     });
     if (user.admin) return true;
-    throw new MissingPermissionException('ADMIN');
+    throw new HttpException(
+      ERROR_MESSAGES.PERMISSION.ADMIN,
+      HttpStatus.UNAUTHORIZED,
+    );
   }
 }

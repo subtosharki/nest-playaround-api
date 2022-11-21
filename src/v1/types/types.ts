@@ -1,31 +1,10 @@
 import type { User } from '@prisma/client';
-import type { UserNotFoundException } from '../exceptions/users.exception';
-import type {
-  AlreadyInUseException,
-  InvalidPropertyException,
-} from '../exceptions/users.exception';
+import type { HttpException } from '@nestjs/common';
 
 export type ListOfUsersData = Array<User>;
-export type UserReturnData = User | UserNotFoundException;
-export type UsernameReturnData = User['username'] | UserNotFoundException;
-export type UpdateUsernameReturnData =
-  | User
-  | UserNotFoundException
-  | AlreadyInUseException;
-export type UpdatePasswordReturnData =
-  | User
-  | InvalidPropertyException
-  | UserNotFoundException
-  | AlreadyInUseException;
+export type UserReturnData = User | HttpException;
+export type UsernameReturnData = User['username'] | HttpException;
+export type UpdateUsernameReturnData = User | HttpException;
+export type UpdatePasswordReturnData = User | HttpException;
 
-export type UserAPIKeyReturnData = User['apikey'] | UserNotFoundException;
-
-export enum InUseTypes {
-  'PASSWORD',
-  'USERNAME',
-}
-export enum PropertyTypes {
-  'OLD_PASSWORD',
-  'CONFIRMATION_PASSWORD',
-  'PASSWORD',
-}
+export type UserAPIKeyReturnData = User['apikey'] | HttpException;

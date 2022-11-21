@@ -1,8 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './login.dto';
 import { compare } from 'bcrypt';
-import { UserAPIKeyReturnData } from '../types/types';
+import type { UserAPIKeyReturnData } from '../types/types';
+import { ERROR_MESSAGES } from '../types/consts';
 
 @Injectable()
 export class LoginService {
@@ -20,9 +21,18 @@ export class LoginService {
         apikey: true,
       },
     });
+    if (!user) {
+      throw new HttpException(
+        ERROR_MESSAGES.INVALID.USERNAME,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     if (user && (await compare(password, user.password))) {
       return user.apikey;
     }
-    throw new UnauthorizedException();
+    throw new HttpException(
+      ERROR_MESSAGES.INVALID.PASSWORD,
+      HttpStatus.BAD_REQUEST,
+    );
   }
 }

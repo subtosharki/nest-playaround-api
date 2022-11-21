@@ -1,12 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SignupDto } from './signup.dto';
-import {
-  PasswordsDoNotMatchException,
-  UsernameAlreadyExistsException,
-} from '../exceptions/signup.exception';
 import { genSalt, hash as genHash } from 'bcrypt';
 import type { User } from '@prisma/client';
+import { ERROR_MESSAGES } from '../types/consts';
 
 @Injectable()
 export class SignupService {
@@ -16,23 +13,30 @@ export class SignupService {
     password,
     password2,
   }: SignupDto): Promise<User> {
-    const usernames = await this.prisma.user.findMany({
-      select: {
-        username: true,
-      },
-    });
-    usernames.forEach((user) => {
-      if (user.username === username) {
-        throw new UsernameAlreadyExistsException();
-      }
-    });
+    const [usernameTaken, hashedPassword] = await Promise.all([
+      this.prisma.user.findFirst({
+        where: {
+          username,
+        },
+      }),
+      genHash(password, await genSalt()),
+    ]);
+    if (usernameTaken) {
+      throw new HttpException(
+        ERROR_MESSAGES.ALREADY_EXISTS.USERNAME,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     if (password !== password2) {
-      throw new PasswordsDoNotMatchException();
+      throw new HttpException(
+        ERROR_MESSAGES.DO_NOT_MATCH.PASSWORDS,
+        HttpStatus.BAD_REQUEST,
+      );
     }
     return await this.prisma.user.create({
       data: {
         username,
-        password: await genHash(password, await genSalt()),
+        password: hashedPassword,
       },
     });
   }

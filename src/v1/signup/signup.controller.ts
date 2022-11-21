@@ -8,7 +8,7 @@ import {
 import { SignupService } from './signup.service';
 import { SignupDto, UserReturnData } from './signup.dto';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
-import { User } from '@prisma/client';
+import type { User } from '@prisma/client';
 
 @ApiTags('Signup')
 @Controller({ path: 'signup', version: '1' })

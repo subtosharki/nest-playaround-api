@@ -1,7 +1,7 @@
 import { Controller, Param, ParseIntPipe, Patch } from '@nestjs/common';
 import { UtilsService } from '../utils/utils.service';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { User } from '@prisma/client';
+import type { User } from '@prisma/client';
 
 @ApiTags('API Key')
 @Controller({ path: 'apikey', version: '1' })

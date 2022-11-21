@@ -69,14 +69,8 @@ export class UsersController {
   @UsePipes(ValidationPipe)
   public async updatePassword(
     @Param('id', ParseIntPipe) id: number,
-    @Body('newPassword') { newPassword }: UpdatePasswordDto,
-    @Body('oldPassword') { oldPassword }: UpdatePasswordDto,
-    @Body('confirmationPassword') { confirmationPassword }: UpdatePasswordDto,
+    @Body() body: UpdatePasswordDto,
   ): Promise<UpdatePasswordReturnData> {
-    return await this.userService.updatePassword(id, {
-      newPassword,
-      oldPassword,
-      confirmationPassword,
-    });
+    return await this.userService.updatePassword(id, body);
   }
 }

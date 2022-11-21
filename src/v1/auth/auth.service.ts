@@ -1,6 +1,11 @@
-import { type ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  type ExecutionContext,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { InvalidAPIKeyException } from '../exceptions/auth.exception';
+import { ERROR_MESSAGES } from '../types/consts';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +19,9 @@ export class AuthService {
       },
     });
     if (user) return true;
-    throw new InvalidAPIKeyException();
+    throw new HttpException(
+      ERROR_MESSAGES.INVALID.APIKEY,
+      HttpStatus.UNAUTHORIZED,
+    );
   }
 }
