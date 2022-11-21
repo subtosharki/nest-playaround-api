@@ -1,13 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-
-export enum InUseTypes {
-  'USERNAME',
-  'PASSWORD',
-}
-export enum PropertyTypes {
-  'OLD_PASSWORD',
-  'CONFIRMATION_PASSWORD',
-}
+import { InUseTypes, PropertyTypes } from '../types/types';
 
 export class AlreadyInUseException extends HttpException {
   public constructor(propertyInUse: InUseTypes) {

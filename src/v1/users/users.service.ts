@@ -3,9 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
 import {
   AlreadyInUseException,
-  InUseTypes,
   InvalidPropertyException,
-  PropertyTypes,
   UserNotFoundException,
 } from '../exceptions/users.exception';
 import { compare, genSalt, hash as genHash } from 'bcrypt';
@@ -16,6 +14,7 @@ import type {
   UsernameReturnData,
   UserReturnData,
 } from '../types/types';
+import { InUseTypes, PropertyTypes } from '../types/types';
 
 @Injectable()
 export class UsersService {
@@ -65,7 +64,7 @@ export class UsersService {
   }
   public async updateUsername(
     id: number,
-    { username }: UpdateUsernameDto,
+    { username, password }: UpdateUsernameDto,
   ): Promise<UpdateUsernameReturnData> {
     const user = await this.prisma.user.findFirst({
       where: {
@@ -73,6 +72,7 @@ export class UsersService {
       },
       select: {
         username: true,
+        password: true,
       },
     });
     if (!user) {
@@ -80,6 +80,9 @@ export class UsersService {
     }
     if (user.username === username) {
       throw new AlreadyInUseException(InUseTypes.USERNAME);
+    }
+    if (!(await compare(password, user.password))) {
+      throw new InvalidPropertyException(PropertyTypes.CONFIRMATION_PASSWORD);
     }
     return await this.prisma.user.update({
       where: {

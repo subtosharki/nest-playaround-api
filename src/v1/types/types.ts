@@ -17,3 +17,15 @@ export type UpdatePasswordReturnData =
   | InvalidPropertyException
   | UserNotFoundException
   | AlreadyInUseException;
+
+export type UserAPIKeyReturnData = User['apikey'] | UserNotFoundException;
+
+export enum InUseTypes {
+  'PASSWORD',
+  'USERNAME',
+}
+export enum PropertyTypes {
+  'OLD_PASSWORD',
+  'CONFIRMATION_PASSWORD',
+  'PASSWORD',
+}
