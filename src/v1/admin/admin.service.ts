@@ -1,8 +1,7 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import type { Request } from 'express';
 import type { User } from '@prisma/client';
-import { ERROR_MESSAGES, type ListOfUsersData } from '../types';
+import type { ListOfUsersData } from '../types';
 import { UtilsService } from '../utils/utils.service';
 
 @Injectable()
@@ -39,14 +38,5 @@ export class AdminService {
         },
       });
     }
-  }
-  public async isAdmin(request: Request): Promise<boolean> {
-    const apikey = String(request.headers['x-api-key']);
-    const user = await this.utilService.getUserByApiKey(apikey);
-    if (user.admin) return true;
-    throw new HttpException(
-      ERROR_MESSAGES.PERMISSION.ADMIN,
-      HttpStatus.UNAUTHORIZED,
-    );
   }
 }

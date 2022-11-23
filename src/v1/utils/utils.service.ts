@@ -5,6 +5,7 @@ import { User } from '@prisma/client';
 import { ERROR_MESSAGES } from '../types';
 import { compare } from 'bcrypt';
 import { GetNewApiKeyDto } from '../apikey/apikey.dto';
+import { Request } from 'express';
 
 @Injectable()
 export class UtilsService {
@@ -73,20 +74,7 @@ export class UtilsService {
     id: number,
     { password }: GetNewApiKeyDto,
   ): Promise<User> {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        id,
-      },
-      select: {
-        password: true,
-      },
-    });
-    if (!user) {
-      throw new HttpException(
-        ERROR_MESSAGES.NOT_FOUND.USER,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+    const user = await this.getUserById(id);
     if (!(await compare(password, user.password))) {
       throw new HttpException(
         ERROR_MESSAGES.INVALID.PASSWORD,
@@ -101,5 +89,14 @@ export class UtilsService {
         apikey: uuid(),
       },
     });
+  }
+  public async isAdmin(request: Request): Promise<boolean> {
+    const apikey = String(request.headers['x-api-key']);
+    const user = await this.getUserByApiKey(apikey);
+    if (user.admin) return true;
+    throw new HttpException(
+      ERROR_MESSAGES.PERMISSION.ADMIN,
+      HttpStatus.UNAUTHORIZED,
+    );
   }
 }
