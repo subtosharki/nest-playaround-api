@@ -3,10 +3,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import type { Request } from 'express';
 import type { User } from '@prisma/client';
 import { ERROR_MESSAGES, type ListOfUsersData } from '../types';
+import { UtilsService } from '../utils/utils.service';
 
 @Injectable()
 export class AdminService {
-  public constructor(private readonly prisma: PrismaService) {}
+  public constructor(
+    private readonly prisma: PrismaService,
+    private readonly utilService: UtilsService,
+  ) {}
   public async getAllAdmins(): Promise<ListOfUsersData> {
     return await this.prisma.user.findMany({
       where: {
@@ -15,20 +19,7 @@ export class AdminService {
     });
   }
   public async setAdmin(id: number): Promise<User> {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        id,
-      },
-      select: {
-        admin: true,
-      },
-    });
-    if (!user) {
-      throw new HttpException(
-        ERROR_MESSAGES.NOT_FOUND.USER,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+    const user = await this.utilService.getUserById(id);
     if (user.admin) {
       return await this.prisma.user.update({
         where: {
@@ -51,14 +42,7 @@ export class AdminService {
   }
   public async isAdmin(request: Request): Promise<boolean> {
     const apikey = String(request.headers['x-api-key']);
-    const user = await this.prisma.user.findFirst({
-      where: {
-        apikey,
-      },
-      select: {
-        admin: true,
-      },
-    });
+    const user = await this.utilService.getUserByApiKey(apikey);
     if (user.admin) return true;
     throw new HttpException(
       ERROR_MESSAGES.PERMISSION.ADMIN,

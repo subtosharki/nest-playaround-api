@@ -4,21 +4,21 @@ import { SignupDto } from './signup.dto';
 import { genSalt, hash as genHash } from 'bcrypt';
 import type { User } from '@prisma/client';
 import { ERROR_MESSAGES } from '../types';
+import { UtilsService } from '../utils/utils.service';
 
 @Injectable()
 export class SignupService {
-  public constructor(private readonly prisma: PrismaService) {}
+  public constructor(
+    private readonly prisma: PrismaService,
+    private readonly utilService: UtilsService,
+  ) {}
   public async signup({
     username,
     password,
     password2,
   }: SignupDto): Promise<User> {
     const [usernameTaken, hashedPassword] = await Promise.all([
-      this.prisma.user.findFirst({
-        where: {
-          username,
-        },
-      }),
+      this.utilService.getUserByUsername(username),
       genHash(password, await genSalt()),
     ]);
     if (usernameTaken) {

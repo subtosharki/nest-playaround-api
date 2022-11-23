@@ -10,81 +10,33 @@ import type {
   UserReturnData,
 } from '../types';
 import { ERROR_MESSAGES } from '../types';
+import { UtilsService } from '../utils/utils.service';
 
 @Injectable()
 export class UsersService {
-  public constructor(private readonly prisma: PrismaService) {}
+  public constructor(
+    private readonly prisma: PrismaService,
+    private readonly utilService: UtilsService,
+  ) {}
   public async getAllUsers(): Promise<ListOfUsersData> {
     return await this.prisma.user.findMany();
   }
   public async getUser(id: number): Promise<UserReturnData> {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        id,
-      },
-    });
-    if (!user) {
-      throw new HttpException(
-        ERROR_MESSAGES.NOT_FOUND.USER,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    return user;
+    return await this.utilService.getUserById(id);
   }
   public async deleteUser(id: number): Promise<UserReturnData> {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        id,
-      },
-    });
-    if (!user) {
-      throw new HttpException(
-        ERROR_MESSAGES.NOT_FOUND.USER,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    return await this.prisma.user.delete({
-      where: {
-        id,
-      },
-    });
+    await this.utilService.getUserById(id);
+    return await this.utilService.deleteUserById(id);
   }
   public async getUsername(id: number): Promise<UsernameReturnData> {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        id,
-      },
-      select: {
-        username: true,
-      },
-    });
-    if (!user) {
-      throw new HttpException(
-        ERROR_MESSAGES.NOT_FOUND.USER,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+    const user = await this.utilService.getUserById(id);
     return user.username;
   }
   public async updateUsername(
     id: number,
     { username, password }: UpdateUsernameDto,
   ): Promise<UpdateUsernameReturnData> {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        id,
-      },
-      select: {
-        username: true,
-        password: true,
-      },
-    });
-    if (!user) {
-      throw new HttpException(
-        ERROR_MESSAGES.NOT_FOUND.USER,
-        HttpStatus.NOT_FOUND,
-      );
-    }
+    const user = await this.utilService.getUserById(id);
     if (user.username === username) {
       throw new HttpException(
         ERROR_MESSAGES.ALREADY_EXISTS.USERNAME,
@@ -116,17 +68,7 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const user = await this.prisma.user.findFirst({
-      where: {
-        id,
-      },
-      select: {
-        password: true,
-      },
-    });
-    if (!user) {
-      throw new HttpException(ERROR_MESSAGES.NOT_FOUND.USER, 404);
-    }
+    const user = await this.utilService.getUserById(id);
     const [oldPasswordMatches, newPasswordIsInUse, hashedPassword] =
       await Promise.all([
         compare(oldPassword, user.password),

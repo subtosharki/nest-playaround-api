@@ -23,3 +23,5 @@ export const ERROR_MESSAGES = {
     ADMIN: 'Missing admin permission',
   },
 };
+
+export const APIKeyHeaderContent = { name: 'x-api-key' };

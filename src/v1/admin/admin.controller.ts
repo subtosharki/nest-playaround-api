@@ -23,7 +23,7 @@ export class AdminController {
     return await this.adminService.getAllAdmins();
   }
   @ApiOkResponse({ description: 'Switches a users admin status on/off' })
-  @Post('/add/:id')
+  @Post('/:id')
   public async setAdmin(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return await this.adminService.setAdmin(id);
   }

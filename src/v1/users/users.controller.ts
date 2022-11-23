@@ -14,7 +14,7 @@ import { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { AdminGuard } from '../admin/admin.guard';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import type {
   ListOfUsersData,
   UpdatePasswordReturnData,
@@ -22,6 +22,7 @@ import type {
   UsernameReturnData,
   UserReturnData,
 } from '../types';
+import { APIKeyHeaderContent } from '../types';
 
 @ApiTags('Users')
 @Controller({ path: 'users', version: '1' })
@@ -41,6 +42,7 @@ export class UsersController {
     return await this.userService.getUser(id);
   }
   @ApiOkResponse({ description: 'Deletes the ID given' })
+  @ApiHeader(APIKeyHeaderContent)
   @UseGuards(AdminGuard)
   @Delete('/:id')
   public async deleteUser(
@@ -56,6 +58,7 @@ export class UsersController {
     return await this.userService.getUsername(id);
   }
   @ApiOkResponse({ description: 'Change the IDs username' })
+  @ApiHeader(APIKeyHeaderContent)
   @Patch('/:id/username')
   @UsePipes(ValidationPipe)
   public async updateUsername(
@@ -65,6 +68,7 @@ export class UsersController {
     return await this.userService.updateUsername(id, body);
   }
   @ApiOkResponse({ description: 'Change the IDs password' })
+  @ApiHeader(APIKeyHeaderContent)
   @Patch('/:id/password')
   @UsePipes(ValidationPipe)
   public async updatePassword(

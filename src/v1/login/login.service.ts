@@ -3,23 +3,19 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './login.dto';
 import { compare } from 'bcrypt';
 import { ERROR_MESSAGES, type UserAPIKeyReturnData } from '../types';
+import { UtilsService } from '../utils/utils.service';
 
 @Injectable()
 export class LoginService {
-  public constructor(private readonly prisma: PrismaService) {}
+  public constructor(
+    private readonly prisma: PrismaService,
+    private readonly utilService: UtilsService,
+  ) {}
   public async login({
     username,
     password,
   }: LoginDto): Promise<UserAPIKeyReturnData> {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        username,
-      },
-      select: {
-        password: true,
-        apikey: true,
-      },
-    });
+    const user = await this.utilService.getUserByUsername(username);
     if (!user) {
       throw new HttpException(
         ERROR_MESSAGES.INVALID.USERNAME,
