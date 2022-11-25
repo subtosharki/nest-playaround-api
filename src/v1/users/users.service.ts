@@ -30,7 +30,7 @@ export class UsersService {
   public async deleteUser(id: number): Promise<UserReturnData> {
     await this.utilService.getUserById(id);
     const user = await this.utilService.deleteUserById(id);
-    this.loggerService.emit(LogType.USER_DELETED, user);
+    await this.loggerService.log(LogType.USER_DELETED, user);
     return user;
   }
   public async getUsername(id: number): Promise<UsernameReturnData> {
@@ -62,7 +62,7 @@ export class UsersService {
         username,
       },
     });
-    this.loggerService.emit(LogType.USER_UPDATED, updatedUser);
+    await this.loggerService.log(LogType.USER_UPDATED, updatedUser);
     return user;
   }
   public async updatePassword(
@@ -102,7 +102,7 @@ export class UsersService {
         password: hashedPassword,
       },
     });
-    this.loggerService.emit(LogType.USER_UPDATED, updatedUser);
+    await this.loggerService.log(LogType.USER_UPDATED, updatedUser);
     return updatedUser;
   }
 }

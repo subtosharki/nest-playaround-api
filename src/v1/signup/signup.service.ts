@@ -41,7 +41,7 @@ export class SignupService {
         password: hashedPassword,
       },
     });
-    this.loggerService.emit(LogType.USER_CREATED, user);
+    await this.loggerService.log(LogType.USER_CREATED, user);
     return user;
   }
 }

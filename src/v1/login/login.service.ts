@@ -21,7 +21,7 @@ export class LoginService {
       throw new InvalidCredentialsException();
     }
     if (user && (await compare(password, user.password))) {
-      this.loggerService.emit(LogType.USER_LOGGED_IN, user.apikey);
+      await this.loggerService.log(LogType.USER_LOGGED_IN, user.apikey);
       return user.apikey;
     }
     throw new InvalidCredentialsException();

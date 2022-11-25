@@ -31,7 +31,7 @@ export class AdminService {
           admin: true,
         },
       });
-      this.loggerService.emit(LogType.ADMIN_PERMISSION_ADDED, updatedUser);
+      await this.loggerService.log(LogType.ADMIN_PERMISSION_ADDED, updatedUser);
       return updatedUser;
     }
     const updatedUser = await this.prisma.user.update({
@@ -42,6 +42,6 @@ export class AdminService {
         admin: false,
       },
     });
-    this.loggerService.emit(LogType.ADMIN_PERMISSION_REMOVED, updatedUser);
+    await this.loggerService.log(LogType.ADMIN_PERMISSION_REMOVED, updatedUser);
   }
 }

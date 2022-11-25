@@ -98,7 +98,7 @@ export class UtilsService {
         apikey: uuid(),
       },
     });
-    this.loggerService.emit(LogType.NEW_APIKEY, updatedUser);
+    await this.loggerService.log(LogType.NEW_APIKEY, updatedUser);
     return updatedUser;
   }
   public async isAdmin(request: Request): Promise<boolean> {
