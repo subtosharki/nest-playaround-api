@@ -112,7 +112,7 @@ export class UtilsService {
       );
     }
     throw new HttpException(
-      ErrorMessages.MISSING_ADMIN_PERMISSION,
+      ErrorMessages.INVALID_APIKEY,
       HttpStatus.UNAUTHORIZED,
     );
   }
