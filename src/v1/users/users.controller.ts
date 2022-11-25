@@ -7,42 +7,45 @@ import {
   ParseIntPipe,
   Patch,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
-import { UpdatePasswordDto, UpdateUsernameDto } from './users.dto';
+import { UpdatePasswordBody, UpdateUsernameBody } from './users.dto';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { AdminGuard } from '../admin/admin.guard';
 import { ApiHeader, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import type {
-  ListOfUsersData,
-  UpdatePasswordReturnData,
-  UpdateUsernameReturnData,
-  UsernameReturnData,
-  UserReturnData,
+import {
+  type ListOfUsersData,
+  type UpdatePasswordReturnData,
+  type UpdateUsernameReturnData,
+  type UsernameReturnData,
+  type UserReturnData,
+  APIKeyHeaderContent,
+  GetAllUsersResponseContent,
+  GetUserResponseContent,
+  DeleteUserResponseContent,
+  GetUsernameResponseContent,
+  UpdateUsernameResponseContent,
 } from '../types';
-import { APIKeyHeaderContent } from '../types';
 
 @ApiTags('Users')
+@ApiHeader(APIKeyHeaderContent)
 @Controller({ path: 'users', version: '1' })
-@UseGuards(AuthGuard)
 export class UsersController {
   public constructor(private readonly userService: UsersService) {}
-  @ApiOkResponse({ description: 'Returns a list of all users' })
+  @ApiOkResponse(GetAllUsersResponseContent)
   @Get('/')
+  @UseGuards(AuthGuard)
   public async getAllUsers(): Promise<ListOfUsersData> {
     return await this.userService.getAllUsers();
   }
-  @ApiOkResponse({ description: 'Returns a certain users data' })
+  @ApiOkResponse(GetUserResponseContent)
   @Get('/:id')
   public async getUser(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<UserReturnData> {
     return await this.userService.getUser(id);
   }
-  @ApiOkResponse({ description: 'Deletes the ID given' })
-  @ApiHeader(APIKeyHeaderContent)
+  @ApiOkResponse(DeleteUserResponseContent)
   @UseGuards(AdminGuard)
   @Delete('/:id')
   public async deleteUser(
@@ -50,30 +53,28 @@ export class UsersController {
   ): Promise<UserReturnData> {
     return await this.userService.deleteUser(id);
   }
-  @ApiOkResponse({ description: 'Returns the IDs username' })
+  @ApiOkResponse(GetUsernameResponseContent)
   @Get('/:id/username')
   public async getUsername(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<UsernameReturnData> {
     return await this.userService.getUsername(id);
   }
-  @ApiOkResponse({ description: 'Change the IDs username' })
+  @ApiOkResponse(UpdateUsernameResponseContent)
   @ApiHeader(APIKeyHeaderContent)
   @Patch('/:id/username')
-  @UsePipes(ValidationPipe)
   public async updateUsername(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateUsernameDto,
+    @Body() body: UpdateUsernameBody,
   ): Promise<UpdateUsernameReturnData> {
     return await this.userService.updateUsername(id, body);
   }
-  @ApiOkResponse({ description: 'Change the IDs password' })
+  @ApiOkResponse()
   @ApiHeader(APIKeyHeaderContent)
   @Patch('/:id/password')
-  @UsePipes(ValidationPipe)
   public async updatePassword(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdatePasswordDto,
+    @Body() body: UpdatePasswordBody,
   ): Promise<UpdatePasswordReturnData> {
     return await this.userService.updatePassword(id, body);
   }

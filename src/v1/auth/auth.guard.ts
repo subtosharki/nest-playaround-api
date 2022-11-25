@@ -3,12 +3,14 @@ import {
   type CanActivate,
   type ExecutionContext,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { UtilsService } from '../utils/utils.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  public constructor(private readonly authService: AuthService) {}
+  public constructor(private readonly utilsService: UtilsService) {}
   public async canActivate(context: ExecutionContext): Promise<boolean> {
-    return await this.authService.validateApiKey(context);
+    return await this.utilsService.validateApiKey(
+      context.switchToHttp().getRequest(),
+    );
   }
 }

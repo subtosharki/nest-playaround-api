@@ -1,33 +1,29 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoginDto } from './login.dto';
+import { Injectable } from '@nestjs/common';
+import { LoginBody } from './login.dto';
 import { compare } from 'bcrypt';
-import { ERROR_MESSAGES, type UserAPIKeyReturnData } from '../types';
+import { LogType, type UserAPIKeyReturnData } from '../types';
 import { UtilsService } from '../utils/utils.service';
+import { LoggerService } from '../logger/logger.service';
+import { InvalidCredentialsException } from '../exceptions/credentials.exception';
 
 @Injectable()
 export class LoginService {
   public constructor(
-    private readonly prisma: PrismaService,
     private readonly utilService: UtilsService,
+    private readonly loggerService: LoggerService,
   ) {}
   public async login({
     username,
     password,
-  }: LoginDto): Promise<UserAPIKeyReturnData> {
+  }: LoginBody): Promise<UserAPIKeyReturnData> {
     const user = await this.utilService.getUserByUsername(username);
     if (!user) {
-      throw new HttpException(
-        ERROR_MESSAGES.INVALID.USERNAME,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new InvalidCredentialsException();
     }
     if (user && (await compare(password, user.password))) {
+      this.loggerService.emit(LogType.USER_LOGGED_IN, user.apikey);
       return user.apikey;
     }
-    throw new HttpException(
-      ERROR_MESSAGES.INVALID.PASSWORD,
-      HttpStatus.BAD_REQUEST,
-    );
+    throw new InvalidCredentialsException();
   }
 }

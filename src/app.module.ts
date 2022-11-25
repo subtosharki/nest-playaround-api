@@ -9,6 +9,7 @@ import { ApikeyModule } from './v1/apikey/apikey.module';
 import { AdminModule } from './v1/admin/admin.module';
 import { AuthModule } from './v1/auth/auth.module';
 import { UtilsModule } from './v1/utils/utils.module';
+import { LoggerModule } from './v1/logger/logger.module';
 import helmet from 'helmet';
 
 @Module({
@@ -21,6 +22,7 @@ import helmet from 'helmet';
     AdminModule,
     AuthModule,
     UtilsModule,
+    LoggerModule,
   ],
   providers: [PrismaService],
 })
